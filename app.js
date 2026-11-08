@@ -191,19 +191,6 @@
       </a>`;
   };
 
-  const wavesSvg = () => {
-    let d1 = "", d2 = "";
-    for (let x = 0; x <= 1200; x += 3) {
-      const m = 1 + 0.6 * Math.sin((2 * Math.PI * x) / 300);
-      d1 += (x ? "L" : "M") + x + " " + (60 + 18 * m * Math.sin((2 * Math.PI * x) / 14)).toFixed(1);
-      const m2 = 1 + 0.6 * Math.sin((2 * Math.PI * x) / 300 + 1.6);
-      d2 += (x ? "L" : "M") + x + " " + (340 + 18 * m2 * Math.sin((2 * Math.PI * x) / 14)).toFixed(1);
-    }
-    return `<svg class="waves" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
-      <defs><linearGradient id="wf" x1="0" x2="1"><stop offset="0" stop-color="#5fd3f3" stop-opacity="0"/><stop offset=".2" stop-color="#5fd3f3" stop-opacity=".5"/><stop offset=".8" stop-color="#5fd3f3" stop-opacity=".5"/><stop offset="1" stop-color="#5fd3f3" stop-opacity="0"/></linearGradient></defs>
-      <path d="${d1}" fill="none" stroke="url(#wf)" stroke-width="1.5"/><path d="${d2}" fill="none" stroke="url(#wf)" stroke-width="1.5"/></svg>`;
-  };
-
   const thumbCard = (l, href, ext = false) => `
     <a class="card" href="${href}" ${ext ? 'target="_blank" rel="noopener"' : ""} style="padding:0;overflow:hidden">
       <img loading="lazy" src="${thumb(l.id)}" alt="" style="aspect-ratio:16/9;object-fit:cover">
@@ -218,67 +205,92 @@
   /* ---------- pages ---------- */
   const pages = {};
 
+  /* home: academic profile page */
+  const HOME = {
+    he: {
+      position: "מרצה בהנדסת חשמל ותקשורת",
+      bio: [
+        "ד״ר אייל מגורי מלמד במרכז האקדמי לב (JCT) בירושלים קורסים בתקשורת, באותות ומערכות, באנטנות ובתורת האינפורמציה. המחקר שלו עוסק בחישה במכ״ם mmWave, בהדמיה ובעיבוד אותות.",
+        "הוא מקים במכון לב מעבדה לתקשורת, RF ומכ״ם, שבה סטודנטים עובדים על ציוד אמיתי – ומשתף את כל ההרצאות והמעבדות באתר הזה, בחינם.",
+      ],
+      interests: "תחומי עניין", interestList: ["חישה במכ״ם mmWave וניטור סימנים חיוניים", "הדמיית מכ״ם בשדה קרוב (SAR)", "עיבוד אותות ומערכות תקשורת", "רדיו מוגדר תוכנה (SDR)", "אנטנות ו-RF"],
+      email: "דוא״ל", teaching: "הוראה", teachingLead: "הרצאות מוקלטות מלאות, בסדר הלימוד.",
+      thCode: "מס׳ קורס", thCourse: "קורס", thYear: "שנה", thLect: "הרצאות",
+      upcoming: "בהכנה", research: "מחקר", allResearch: "כל תחומי המחקר והצעות לשיתוף פעולה",
+      lab: "המעבדה", labText: "שבעה ניסויים ב-ADALM-Pluto שבונים רדיו שלם – מטון ראשון ועד OFDM ומכ״ם. לכל ניסוי רקע תאורטי, קוד Python ומשימות מחקר.",
+      toLab: "לניסויים", students: "לסטודנטים",
+      links: [["exam", "הכנה למבחנים", "חזרות, תרגולים ופתרונות"], ["topics", "חיפוש לפי נושא", "כל השיעורים מקובצים לפי נושא"], ["projects", "פרויקטי גמר", "פרויקטים פתוחים במכ״ם, SDR ואנטנות"]],
+      summary: (c, l, h) => `${c} קורסים · ${l} הרצאות · ${h}+ שעות לימוד`,
+    },
+    en: {
+      position: "Lecturer in Electrical and Communication Engineering",
+      bio: [
+        "Dr. Eyal Magory teaches communication systems, signals and systems, antennas and information theory at the Jerusalem College of Technology (JCT). His research focuses on mmWave radar sensing, imaging and signal processing.",
+        "He is building a communication, RF and radar lab at JCT, where students work on real hardware – and shares all lectures and labs on this site, free of charge.",
+      ],
+      interests: "Research interests", interestList: ["mmWave radar sensing and vital-sign monitoring", "Near-field radar imaging (SAR)", "Signal processing and communication systems", "Software-defined radio (SDR)", "Antennas and RF"],
+      email: "Email", teaching: "Teaching", teachingLead: "Full recorded lectures, in teaching order.",
+      thCode: "Code", thCourse: "Course", thYear: "Year", thLect: "Lectures",
+      upcoming: "In preparation", research: "Research", allResearch: "All research areas and collaboration topics",
+      lab: "The lab", labText: "Seven ADALM-Pluto experiments that build a complete radio – from a first tone to OFDM and radar. Each comes with theory, Python code and research tasks.",
+      toLab: "View experiments", students: "For students",
+      links: [["exam", "Exam preparation", "Reviews, tutorials and solutions"], ["topics", "Browse by topic", "All lectures grouped by topic"], ["projects", "Final-year projects", "Open projects in radar, SDR and antennas"]],
+      summary: (c, l, h) => `${c} courses · ${l} lectures · ${h}+ hours of teaching`,
+    },
+  };
+
   pages.home = () => {
-    const t = T();
-    const featured = ["L8bJGr18qGM", "dH8FtkFdXnk", "XmWzYSSivBY", "y-FBDLiEVRE"].map((id) => allLessons.find((l) => l.id === id)).filter(Boolean);
+    const t = T(), h = EN ? HOME.en : HOME.he;
+    const photo = SITE.photo ? `<img class="portrait" src="${esc(SITE.photo)}" alt="${esc(tr(SITE, "owner"))}">` : "";
     return `
-      <section class="hero">
-        ${wavesSvg()}
-        <div class="wrap">
+      <section class="profile"><div class="wrap profile-grid">
+        <div>
+          ${photo}
           <h1>${esc(tr(SITE, "owner"))}</h1>
-          <div class="inst">${instBadge()}${esc(tr(LAB, "inst"))}</div>
-          <div class="topics">${t.heroTopics.map(esc).join("<span>•</span>")}</div>
-          <p class="lead">${esc(tr(SITE, "tagline"))}. ${t.leadSuffix}</p>
-          <form class="search" role="search" id="search-form">
-            <input type="search" id="q" placeholder="${esc(t.searchPh)}" aria-label="${t.search}">
-            <button type="submit">${t.search}</button>
-          </form>
-          <div class="stats">
-            <div><b>${COURSES.length}</b><small>${t.courses}</small></div>
-            <div><b>${allLessons.length}</b><small>${t.lessons}</small></div>
-            <div><b>${hours(allLessons)}+</b><small>${t.hoursLearning}</small></div>
-          </div>
+          <div class="position">${h.position}</div>
+          <div class="affil">${instBadge()}${esc(tr(LAB, "inst"))}</div>
+          ${h.bio.map((p) => `<p>${esc(p)}</p>`).join("")}
+          <ul class="contact">
+            <li><span>${h.email}</span> <a href="mailto:${esc(SITE.email)}" dir="ltr">${esc(SITE.email)}</a></li>
+            <li><span>YouTube</span> <a href="${esc(SITE.youtube)}" target="_blank" rel="noopener" dir="ltr">@JCT_1</a></li>
+            <li><span>GitHub</span> <a href="https://github.com/magory1" target="_blank" rel="noopener" dir="ltr">magory1</a></li>
+          </ul>
         </div>
-      </section>
-
-      <section class="block"><div class="wrap">
-        <div class="section-head"><h2>${t.courses}</h2><a href="${P()}/courses">${t.allCourses} ${t.more}</a></div>
-        <div class="grid">${COURSES.map(courseCard).join("")}
-          <a class="card course-card" href="${P()}/rf" style="--c:#f2b84b">
-            <div class="code">${t.rfCard} · ${t.soon}</div>
-            <h3>${esc(tr(RF_COURSE, "title"))}</h3>
-            <div class="muted">${esc(tr(RF_COURSE, "lead"))}</div>
-          </a>
-          <div class="card soon">
-            <div class="code">${t.soon}</div>
-            <h3>${t.prepTitle}</h3>
-            <div class="muted">${t.prepText}</div>
-          </div>
-        </div>
+        <aside class="interests">
+          <h2>${h.interests}</h2>
+          <ul>${h.interestList.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+        </aside>
       </div></section>
 
-      <section class="block"><div class="wrap">
-        <div class="section-head"><h2>${t.byTopic}</h2><a href="${P()}/topics">${t.allTopics} ${t.more}</a></div>
-        <div class="chips">${["am", "fm", "pll", "digital", "qam", "matched", "infotheory", "linearcodes", "fourier", "antennas", "sdr", "radar", "matlab"].map((k) => topicChip(k, true)).join("")}</div>
+      <section class="acad"><div class="wrap">
+        <div class="acad-head"><h2>${h.teaching}</h2><span class="muted">${h.summary(COURSES.length, allLessons.length, hours(allLessons))}</span></div>
+        <table class="courses-table">
+          <thead><tr><th>${h.thCode}</th><th>${h.thCourse}</th><th>${h.thYear}</th><th>${h.thLect}</th></tr></thead>
+          <tbody>
+            ${COURSES.map((c) => `<tr><td dir="ltr">${esc(c.code)}</td><td><a href="${P()}/course/${c.id}">${esc(tr(c, "title"))}</a>${c.lang === "en" && !EN ? ' <small class="muted">(English)</small>' : ""}</td><td>${esc(tr(c, "year"))}</td><td>${courseLessons(c).length}</td></tr>`).join("")}
+            <tr><td>—</td><td><a href="${P()}/rf">${esc(tr(RF_COURSE, "title"))}</a></td><td colspan="2" class="muted">${h.upcoming}</td></tr>
+          </tbody>
+        </table>
+        <form class="search search-inline" role="search" id="search-form">
+          <input type="search" id="q" placeholder="${esc(t.searchPh)}" aria-label="${t.search}">
+          <button type="submit">${t.search}</button>
+        </form>
       </div></section>
 
-      <section class="block"><div class="wrap">
-        <div class="section-head"><h2>${t.featured}</h2></div>
-        <div class="grid">${featured.map((l) => thumbCard(l, `${P()}/course/${l.course.id}/${l.id}`)).join("")}</div>
+      <section class="acad"><div class="wrap">
+        <div class="acad-head"><h2>${h.research}</h2><a href="${P()}/research">${h.allResearch} ${t.more}</a></div>
+        <ol class="research-list">${RESEARCH.map((r) => `<li><b>${esc(tr(r, "title"))}</b><span class="muted">${esc(tr(r, "text"))}</span></li>`).join("")}</ol>
       </div></section>
 
-      <section class="block"><div class="wrap">
-        <div class="callout">
-          <div><h3>${t.labCta}</h3><div class="muted">${t.labCtaText}</div></div>
-          <a class="btn" href="${P()}/lab">${t.toLab}</a>
-        </div>
+      <section class="acad"><div class="wrap">
+        <div class="acad-head"><h2>${h.lab}</h2><a href="${P()}/lab">${h.toLab} ${t.more}</a></div>
+        <p class="lab-text">${h.labText}</p>
+        <ol class="lab-list">${SDR_LABS.map((l) => `<li><a href="${P()}/sdr/${l.id}">${esc(tr(l, "title").replace(/^(ניסוי|Lab) \d+ – /, ""))}</a></li>`).join("")}</ol>
       </div></section>
 
-      <section class="block" style="padding-top:0"><div class="wrap">
-        <div class="callout">
-          <div><h3>${t.projCta}</h3><div class="muted">${t.projCtaText}</div></div>
-          <a class="btn" href="${P()}/projects">${t.toProjects}</a>
-        </div>
+      <section class="acad"><div class="wrap">
+        <div class="acad-head"><h2>${h.students}</h2></div>
+        <div class="student-links">${h.links.map(([r, a, b]) => `<a href="${P()}/${r}"><b>${a}</b><span>${b}</span></a>`).join("")}</div>
       </div></section>`;
   };
 

@@ -18,6 +18,7 @@ window.SITE = {
   tagline_en: "Full lectures, tutorials and labs in electrical and communication engineering – free",
   email: "magory@g.jct.ac.il",
   youtube: "https://www.youtube.com/@JCT_1",
+  photo: "",   // תמונת פרופיל: שמים קובץ ב-img/ וכותבים כאן את הנתיב, למשל "img/eyal.jpg"
 };
 
 window.TOPICS = {

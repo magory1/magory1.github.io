@@ -256,3 +256,61 @@ pre.src { max-height: 560px; }
 .modules li b { display: block; }
 .modules li span { font-size: 15px; }
 .partners { margin-top: auto; font-size: 14px; color: var(--muted); padding-top: 6px; border-top: 1px dashed var(--line); }
+
+/* ---------- academic style ---------- */
+:root { --serif: "Frank Ruhl Libre", "Times New Roman", Georgia, serif; }
+h1, h2, .page-head h1 { font-family: var(--serif); font-weight: 700; letter-spacing: 0; }
+h2 { font-size: 26px; }
+
+.profile { background: var(--surface); border-bottom: 1px solid var(--line); }
+.profile-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr); gap: 48px; padding-top: 56px; padding-bottom: 48px; align-items: start; }
+.profile h1 { font-size: clamp(34px, 5vw, 48px); margin: 0; line-height: 1.15; }
+.profile .position { font-size: 20px; color: var(--text); margin-top: 6px; }
+.profile .affil { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 17px; margin: 6px 0 20px; }
+.profile .affil .inst-mark { background: var(--navy); color: #fff; }
+.profile p { margin: 0 0 12px; max-width: 680px; }
+.portrait { width: 150px; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 18px; border: 1px solid var(--line); }
+.contact { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 16px; }
+.contact span { color: var(--muted); margin-inline-end: 4px; }
+.interests { border-inline-start: 3px solid var(--navy); padding-inline-start: 22px; }
+.interests h2 { font-size: 20px; margin-bottom: 10px; }
+.interests ul { margin: 0; padding: 0; list-style: none; }
+.interests li { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+.interests li:last-child { border-bottom: 0; }
+@media (prefers-color-scheme: dark) { .interests { border-color: var(--accent); } }
+@media (max-width: 860px) { .profile-grid { grid-template-columns: 1fr; gap: 28px; padding-top: 36px; } }
+
+.acad { padding: 40px 0 8px; }
+
+.acad-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; border-bottom: 2px solid var(--navy); padding-bottom: 8px; margin-bottom: 16px; }
+@media (prefers-color-scheme: dark) { .acad-head { border-color: var(--accent); } }
+.acad-head span, .acad-head a { font-size: 15px; }
+
+.courses-table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.courses-table th { text-align: start; font-weight: 500; color: var(--muted); font-size: 14px; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.courses-table td { padding: 11px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.courses-table td:first-child { color: var(--muted); white-space: nowrap; width: 90px; text-align: start; }
+.courses-table td:nth-child(3), .courses-table td:nth-child(4) { white-space: nowrap; color: var(--muted); }
+.courses-table a { font-weight: 500; }
+@media (max-width: 600px) {
+  .courses-table th:nth-child(3), .courses-table td:nth-child(3) { display: none; }
+  .courses-table td:first-child { width: auto; }
+}
+.search-inline { margin: 20px 0 0; max-width: 520px; box-shadow: none; border: 1px solid var(--line); }
+
+.research-list, .lab-list { margin: 0; padding-inline-start: 24px; }
+.research-list li { margin: 0 0 14px; }
+.research-list li b { display: block; font-weight: 500; font-size: 18px; }
+.research-list li span { font-size: 16px; }
+.lab-text { margin: 0 0 10px; }
+.lab-list { columns: 2; column-gap: 40px; }
+.lab-list li { margin: 4px 0; break-inside: avoid; }
+@media (max-width: 700px) { .lab-list { columns: 1; } }
+
+.student-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.student-links a { padding: 16px 18px; color: inherit; border-inline-end: 1px solid var(--line); }
+.student-links a:last-child { border-inline-end: 0; }
+.student-links a:hover { background: var(--surface-2); text-decoration: none; }
+.student-links b { display: block; color: var(--accent); font-weight: 500; }
+.student-links span { font-size: 15px; color: var(--muted); }
+@media (max-width: 700px) { .student-links a { border-inline-end: 0; border-bottom: 1px solid var(--line); } }
