@@ -16,7 +16,18 @@
 
   const UI = {
     he: {
-      nav: { home: "בית", courses: "קורסים", topics: "נושאים", exam: "הכנה למבחנים", research: "מחקר", projects: "פרויקטים", about: "אודות" },
+      nav: { home: "בית", courses: "קורסים", topics: "נושאים", exam: "הכנה למבחנים", lab: "מעבדה", research: "מחקר", projects: "פרויקטים", about: "אודות" },
+      labLead: "ניסויים מעשיים ב-SDR, קורס ידע כללי ב-RF ומחקר – במרכז האקדמי לב.",
+      vision: "החזון", equipment: "ציוד", sdrTitle: "מעבדת SDR – ניסויים עם ADALM-Pluto",
+      sdrLead: "שבעה ניסויים שבונים רדיו שלם, מטון ראשון ועד OFDM ומכ״ם. כל ניסוי כולל תאוריה קצרה, קוד Python ומשימות מחקר. הקוד רץ בסימולציה גם בלי חומרה.",
+      theory: "רקע תאורטי", tasks: "מה לחקור", simResult: "תוצאות סימולציה", hwResult: "תוצאות מהחומרה",
+      hwSoon: "יתעדכן אחרי ההרצה על ה-ADALM-Pluto במעבדה.", code: "הקוד", download: "הורדה", showCode: "הצגת הקוד", hideCode: "הסתרת הקוד",
+      common: "קובץ משותף (חובה)", allCode: "כל הקוד ב-GitHub ↗", runIt: "הרצה", related: "שיעורים קשורים",
+      prevLab: "לניסוי הקודם", nextLab: "לניסוי הבא", allLabs: "כל הניסויים", toLab: "למעבדה",
+      rfModules: "נושאי הקורס", rfSoon: "הסרטונים בהכנה. רוצים לקבל עדכון כשהקורס עולה?", notify: "עדכנו אותי", rfSubject: "קורס RF – עדכון",
+      collabTitle: "נושאים למחקר ולשיתוף פעולה", collabLead: "כיווני מחקר שהמעבדה מציעה לחברות ולמוסדות. כל נושא יכול להתחיל כפרויקט סטודנטים ולהתפתח למחקר משותף.",
+      partners: "מתאים ל", labCta: "המעבדה במכון לב", labCtaText: "ניסויי SDR מעשיים עם קוד מלא, קורס ידע כללי ב-RF ונושאים לשיתוף פעולה.",
+      rfCard: "קורס חדש",
       courses: "קורסים", allCourses: "כל הקורסים", byTopic: "לפי נושא", allTopics: "כל הנושאים", featured: "שיעורים מומלצים",
       lessons: "שיעורים", videos: "סרטונים", hours: "שעות", hoursLearning: "שעות לימוד", approxHours: (n) => `כ-${n} שעות`,
       course: "קורס", recordings: "הקלטות", playlistYT: "הפלייליסט ב-YouTube ↗", watchYT: "לצפייה ב-YouTube ↗",
@@ -44,7 +55,8 @@
       propose: "שליחת הצעה", projSubject: "פרויקט סטודנטים",
       aboutTitle: "אודות",
       about: [
-        "ד״ר אייל מגורי מלמד קורסים בתקשורת, באותות ומערכות, באנטנות ובתורת האינפורמציה, ומוביל מחקר בחישה במכ״ם mmWave.",
+        "ד״ר אייל מגורי הוא מרצה במרכז האקדמי לב (JCT) – מכון לב, בירושלים. הוא מלמד קורסים בתקשורת, באותות ומערכות, באנטנות ובתורת האינפורמציה, ומוביל מחקר בחישה במכ״ם mmWave.",
+        "המטרה שלו היא לפתח במכון לב מעבדה לתקשורת, RF ומכ״ם – מקום שבו סטודנטים עובדים על ציוד אמיתי, ושבו נפגשים הוראה, פרויקטים ומחקר עם התעשייה.",
         "האתר מרכז את כל השיעורים, התרגולים והמעבדות שהוקלטו – בחינם, בסדר הלימוד ולפי נושא – כדי שכל סטודנט יוכל ללמוד בקצב שלו.",
       ],
       ytChannel: "ערוץ YouTube", notFound: "הדף לא נמצא", backHome: "חזרה לדף הבית",
@@ -53,7 +65,18 @@
       menu: "תפריט", other: "English",
     },
     en: {
-      nav: { home: "Home", courses: "Courses", topics: "Topics", exam: "Exam prep", research: "Research", projects: "Projects", about: "About" },
+      nav: { home: "Home", courses: "Courses", topics: "Topics", exam: "Exam prep", lab: "Lab", research: "Research", projects: "Projects", about: "About" },
+      labLead: "Hands-on SDR experiments, a general RF course and research – at the Jerusalem College of Technology.",
+      vision: "Vision", equipment: "Equipment", sdrTitle: "SDR lab – experiments with the ADALM-Pluto",
+      sdrLead: "Seven experiments that build a complete radio, from a first tone to OFDM and radar. Each one has a short theory part, Python code and research tasks. The code runs in simulation even without hardware.",
+      theory: "Theory", tasks: "What to investigate", simResult: "Simulation results", hwResult: "Hardware results",
+      hwSoon: "Will be added after running on the ADALM-Pluto in the lab.", code: "Code", download: "Download", showCode: "Show code", hideCode: "Hide code",
+      common: "Shared module (required)", allCode: "All code on GitHub ↗", runIt: "Run", related: "Related lectures",
+      prevLab: "Previous experiment", nextLab: "Next experiment", allLabs: "All experiments", toLab: "Visit the lab",
+      rfModules: "Course topics", rfSoon: "Videos are in preparation. Want an update when the course is out?", notify: "Notify me", rfSubject: "RF course – updates",
+      collabTitle: "Research and collaboration topics", collabLead: "Research directions the lab offers to companies and institutions. Each topic can start as a student project and grow into joint research.",
+      partners: "Relevant for", labCta: "The lab at JCT", labCtaText: "Hands-on SDR experiments with full code, a general RF course and collaboration topics.",
+      rfCard: "New course",
       courses: "Courses", allCourses: "All courses", byTopic: "Browse by topic", allTopics: "All topics", featured: "Featured lectures",
       lessons: "lectures", videos: "videos", hours: "hours", hoursLearning: "hours of teaching", approxHours: (n) => `~${n} hours`,
       course: "Course", recordings: "Recorded", playlistYT: "Playlist on YouTube ↗", watchYT: "Watch on YouTube ↗",
@@ -81,7 +104,8 @@
       propose: "Send a proposal", projSubject: "Student project",
       aboutTitle: "About",
       about: [
-        "Dr. Eyal Magory teaches communication systems, signals and systems, antennas and information theory, and leads research in mmWave radar sensing.",
+        "Dr. Eyal Magory is a lecturer at the Jerusalem College of Technology (JCT) – Lev Academic Center. He teaches communication systems, signals and systems, antennas and information theory, and leads research in mmWave radar sensing.",
+        "His goal is to build a communication, RF and radar lab at JCT – a place where students work on real hardware, and where teaching, projects and research meet industry.",
         "This site collects all recorded lectures, tutorials and labs – free, in teaching order and by topic – so every student can learn at their own pace. Most lectures are taught in Hebrew.",
       ],
       ytChannel: "YouTube channel", notFound: "Page not found", backHome: "Back to home",
@@ -186,6 +210,11 @@
       <div style="padding:14px 16px 16px"><h3 style="font-size:17px">${esc(lessonTitle(l))}</h3><div class="muted" style="font-size:14px">${l.course ? esc(tr(l.course, "title")) + " · " : ""}${esc(l.dur)}</div></div>
     </a>`;
 
+  const instBadge = () => LAB.logo
+    ? `<img class="inst-logo" src="${esc(LAB.logo)}" alt="JCT">`
+    : `<span class="inst-mark" aria-hidden="true">JCT</span>`;
+  const REPO = "https://github.com/magory1/magory1.github.io/tree/main/sdr";
+
   /* ---------- pages ---------- */
   const pages = {};
 
@@ -197,6 +226,7 @@
         ${wavesSvg()}
         <div class="wrap">
           <h1>${esc(tr(SITE, "owner"))}</h1>
+          <div class="inst">${instBadge()}${esc(tr(LAB, "inst"))}</div>
           <div class="topics">${t.heroTopics.map(esc).join("<span>•</span>")}</div>
           <p class="lead">${esc(tr(SITE, "tagline"))}. ${t.leadSuffix}</p>
           <form class="search" role="search" id="search-form">
@@ -214,6 +244,11 @@
       <section class="block"><div class="wrap">
         <div class="section-head"><h2>${t.courses}</h2><a href="${P()}/courses">${t.allCourses} ${t.more}</a></div>
         <div class="grid">${COURSES.map(courseCard).join("")}
+          <a class="card course-card" href="${P()}/rf" style="--c:#f2b84b">
+            <div class="code">${t.rfCard} · ${t.soon}</div>
+            <h3>${esc(tr(RF_COURSE, "title"))}</h3>
+            <div class="muted">${esc(tr(RF_COURSE, "lead"))}</div>
+          </a>
           <div class="card soon">
             <div class="code">${t.soon}</div>
             <h3>${t.prepTitle}</h3>
@@ -233,6 +268,13 @@
       </div></section>
 
       <section class="block"><div class="wrap">
+        <div class="callout">
+          <div><h3>${t.labCta}</h3><div class="muted">${t.labCtaText}</div></div>
+          <a class="btn" href="${P()}/lab">${t.toLab}</a>
+        </div>
+      </div></section>
+
+      <section class="block" style="padding-top:0"><div class="wrap">
         <div class="callout">
           <div><h3>${t.projCta}</h3><div class="muted">${t.projCtaText}</div></div>
           <a class="btn" href="${P()}/projects">${t.toProjects}</a>
@@ -331,6 +373,13 @@
         <div class="section-head"><h2>${t.talks}</h2></div>
         <div class="grid">${SPECIALS.map((l) => thumbCard(l, ytWatch(l.id), true)).join("")}</div>
       </div></section>
+      <section class="block" id="collab"><div class="wrap">
+        <div class="section-head"><h2>${t.collabTitle}</h2></div>
+        <p class="muted" style="margin-top:-6px">${t.collabLead}</p>
+        <div class="grid">${COLLAB.map((c) => `
+          <div class="card"><h3>${esc(EN ? c.en : c.he)}</h3><div class="muted">${esc(tr(c, "d"))}</div>
+            <div class="partners"><b>${t.partners}:</b> ${esc(tr(c, "who"))}</div></div>`).join("")}</div>
+      </div></section>
       <section class="block"><div class="wrap">
         <div class="callout">
           <div><h3>${t.industry}</h3><div class="muted">${t.industryText}</div></div>
@@ -360,6 +409,100 @@
         <div class="callout">
           <div><h3>${t.proposeTitle}</h3><div class="muted">${t.proposeText}</div></div>
           <a class="btn" href="mailto:${esc(SITE.email)}?subject=${encodeURIComponent(t.projSubject)}">${t.propose}</a>
+        </div>
+      </div></section>`;
+  };
+
+  pages.lab = () => {
+    const t = T();
+    return `
+      <div class="wrap page-head">
+        <div class="inst">${instBadge()}${esc(tr(LAB, "inst"))}</div>
+        <h1>${esc(tr(LAB, "name"))}</h1><p class="muted">${t.labLead}</p>
+      </div>
+      <section class="block" style="padding-top:10px"><div class="wrap lab-intro">
+        <div><h2>${t.vision}</h2>${(EN ? LAB.vision_en : LAB.vision).map((p) => `<p>${esc(p)}</p>`).join("")}</div>
+        <div class="card"><h3>${t.equipment}</h3><ul class="eq">${LAB.equipment.map((e) => `<li>${esc(EN ? e.en : e.he)}</li>`).join("")}</ul></div>
+      </div></section>
+      <section class="block"><div class="wrap">
+        <div class="section-head"><h2>${t.sdrTitle}</h2><a href="${REPO}" target="_blank" rel="noopener">${t.allCode}</a></div>
+        <p class="muted" style="margin-top:-6px">${t.sdrLead}</p>
+        <div class="grid">${SDR_LABS.map((l) => `
+          <a class="card lab-card" href="${P()}/sdr/${l.id}">
+            <img loading="lazy" src="sdr/figures/${esc(l.fig)}" alt="">
+            <h3>${esc(tr(l, "title"))}</h3>
+            <div class="muted">${esc((EN ? l.theory_en : l.theory)[0])}</div>
+          </a>`).join("")}</div>
+      </div></section>
+      <section class="block"><div class="wrap">
+        <div class="callout">
+          <div><h3>${esc(tr(RF_COURSE, "title"))}</h3><div class="muted">${esc(tr(RF_COURSE, "lead"))}</div></div>
+          <a class="btn" href="${P()}/rf">${t.rfModules}</a>
+        </div>
+      </div></section>
+      <section class="block" style="padding-top:0"><div class="wrap">
+        <div class="callout">
+          <div><h3>${t.collabTitle}</h3><div class="muted">${t.collabLead}</div></div>
+          <a class="btn" href="${P()}/research">${t.nav.research}</a>
+        </div>
+      </div></section>`;
+  };
+
+  pages.sdr = (id) => {
+    const t = T();
+    const i = SDR_LABS.findIndex((l) => l.id === id);
+    if (i < 0) return pages.notfound();
+    const l = SDR_LABS[i], prev = SDR_LABS[i - 1], next = SDR_LABS[i + 1];
+    const rel = allLessons.filter((x) => x.course && x.tags?.some((g) => l.tags.includes(g) && g !== "sdr")).slice(0, 4);
+    return `
+      <div class="wrap page-head">
+        <div class="crumbs"><a href="${P()}/lab">${t.nav.lab}</a> / SDR</div>
+        <h1>${esc(tr(l, "title"))}</h1>
+        <div class="chips">${l.tags.map((k) => topicChip(k)).join("")}</div>
+      </div>
+      <div class="wrap lab-page">
+        <section><h2>${t.theory}</h2>${(EN ? l.theory_en : l.theory).map((p) => `<p>${esc(p)}</p>`).join("")}</section>
+        <section><h2>${t.tasks}</h2><ol class="tasks">${(EN ? l.tasks_en : l.tasks).map((p) => `<li>${esc(p)}</li>`).join("")}</ol></section>
+        <section><h2>${t.code}</h2>
+          <div class="code-box" dir="ltr">
+            <div class="code-actions">
+              <a class="btn" href="sdr/${esc(l.file)}" download>${t.download} ${esc(l.file)}</a>
+              <a class="btn ghost" href="sdr/pluto_common.py" download>${t.common}: pluto_common.py</a>
+              <button type="button" class="btn ghost" id="show-code">${t.showCode}</button>
+            </div>
+            <pre class="run"><code>pip install numpy scipy matplotlib
+python ${esc(l.file)}            # simulation
+python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator)</code></pre>
+            <pre class="src" id="src" hidden><code></code></pre>
+          </div>
+        </section>
+        <section><h2>${t.simResult}</h2>
+          <figure class="fig"><a href="sdr/figures/${esc(l.fig)}" target="_blank" rel="noopener"><img loading="lazy" src="sdr/figures/${esc(l.fig)}" alt="${esc(tr(l, "title"))}"></a>
+          <figcaption>${esc(tr(l, "sim"))}</figcaption></figure>
+        </section>
+        <section><h2>${t.hwResult}</h2><div class="empty">${t.hwSoon}</div></section>
+        ${rel.length ? `<section><h2>${t.related}</h2><div class="grid">${rel.map((x) => thumbCard(x, `${P()}/course/${x.course.id}/${x.id}`)).join("")}</div></section>` : ""}
+        <nav class="lab-nav">
+          ${prev ? `<a href="${P()}/sdr/${prev.id}">${EN ? "←" : "→"} ${t.prevLab}</a>` : "<span></span>"}
+          <a href="${P()}/lab">${t.allLabs}</a>
+          ${next ? `<a href="${P()}/sdr/${next.id}">${t.nextLab} ${EN ? "→" : "←"}</a>` : "<span></span>"}
+        </nav>
+      </div>`;
+  };
+
+  pages.rf = () => {
+    const t = T();
+    return `
+      <div class="wrap page-head">
+        <div class="crumbs"><a href="${P()}/lab">${t.nav.lab}</a> / RF</div>
+        <h1>${esc(tr(RF_COURSE, "title"))}</h1><p class="muted">${esc(tr(RF_COURSE, "lead"))}</p>
+      </div>
+      <section class="block" style="padding-top:10px"><div class="wrap" style="max-width:860px">
+        <h2>${t.rfModules}</h2>
+        <ol class="modules">${RF_COURSE.modules.map((m) => `<li><b>${esc(EN ? m.en : m.he)}</b><span class="muted">${esc(tr(m, "d"))}</span></li>`).join("")}</ol>
+        <div class="callout" style="margin-top:24px">
+          <div><h3>${t.soon}</h3><div class="muted">${t.rfSoon}</div></div>
+          <a class="btn" href="mailto:${esc(SITE.email)}?subject=${encodeURIComponent(t.rfSubject)}">${t.notify}</a>
         </div>
       </div></section>`;
   };
@@ -394,8 +537,8 @@
     const t = T();
     document.documentElement.lang = EN ? "en" : "he";
     document.documentElement.dir = EN ? "ltr" : "rtl";
-    document.title = EN ? "Dr. Eyal Magory – Courses, Research & Projects" : "ד״ר אייל מגורי – קורסים, מחקר ופרויקטים";
-    const routes = { home: "/", courses: "/courses", topics: "/topics", exam: "/exam", research: "/research", projects: "/projects", about: "/about" };
+    document.title = EN ? "Dr. Eyal Magory – JCT | Courses, Lab & Research" : "ד״ר אייל מגורי – מכון לב | קורסים, מעבדה ומחקר";
+    const routes = { home: "/", courses: "/courses", topics: "/topics", exam: "/exam", lab: "/lab", research: "/research", projects: "/projects", about: "/about" };
     document.querySelectorAll("nav.main a").forEach((a) => {
       a.textContent = t.nav[a.dataset.nav];
       a.href = P() + routes[a.dataset.nav];
@@ -408,14 +551,14 @@
     lb.lang = EN ? "he" : "en";
     lb.href = (EN ? "#/" : "#/en/") + rest;            // same page in the other language
     document.querySelector(".menu-btn").setAttribute("aria-label", t.menu);
-    document.getElementById("foot-owner").textContent = tr(SITE, "owner");
+    document.getElementById("foot-owner").textContent = tr(SITE, "owner") + " · " + tr(LAB, "inst_short");
     document.getElementById("foot-free").textContent = t.free;
     document.getElementById("yt-link").textContent = t.ytChannel;
     document.getElementById("mail-link").textContent = t.contact;
   }
 
   /* ---------- router ---------- */
-  const navKey = { "": "home", courses: "courses", course: "courses", topics: "topics", topic: "topics", exam: "exam", research: "research", projects: "projects", about: "about" };
+  const navKey = { "": "home", courses: "courses", course: "courses", topics: "topics", topic: "topics", exam: "exam", lab: "lab", sdr: "lab", rf: "lab", research: "research", projects: "projects", about: "about" };
 
   function render() {
     let raw = location.hash.replace(/^#\/?/, "");
@@ -432,6 +575,9 @@
       case "topics": html = pages.topics(); break;
       case "topic": html = pages.topic(p1, p2); break;
       case "exam": html = pages.exam(p1); break;
+      case "lab": html = pages.lab(); break;
+      case "sdr": html = pages.sdr(p1); break;
+      case "rf": html = pages.rf(); break;
       case "research": html = pages.research(); break;
       case "projects": html = pages.projects(); break;
       case "about": html = pages.about(); break;
@@ -453,6 +599,17 @@
       e.preventDefault();
       const q = app.querySelector("#q").value.trim();
       if (q) location.hash = `${P()}/search?q=${encodeURIComponent(q)}`;
+    });
+    const sc = app.querySelector("#show-code");
+    if (sc) sc.addEventListener("click", async () => {
+      const pre = app.querySelector("#src");
+      if (!pre.hidden) { pre.hidden = true; sc.textContent = T().showCode; return; }
+      const file = app.querySelector(".code-actions a").getAttribute("href");
+      if (!pre.dataset.loaded) {
+        try { pre.firstChild.textContent = await (await fetch(file)).text(); pre.dataset.loaded = "1"; }
+        catch { pre.firstChild.textContent = "Could not load " + file; }
+      }
+      pre.hidden = false; sc.textContent = T().hideCode;
     });
     app.querySelectorAll("[data-kind]").forEach((b) => b.addEventListener("click", () => { pages.exam.filter = b.dataset.kind; render(); }));
     app.querySelectorAll("[data-status]").forEach((b) => b.addEventListener("click", () => { pages.projects.filter = b.dataset.status; render(); }));
