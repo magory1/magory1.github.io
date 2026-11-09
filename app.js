@@ -550,7 +550,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       instruments: "הכרת הציוד", parts: "הניסוי", step: "שלב", done: "בוצע", forReport: "לדוח", save: "לשמור", hint: "הסבר נוסף",
       settings: "הגדרות", table: "טבלה 1 (חלק 3)", tableLead: "הכניסו את המתחים שמדדתם (ב-Volts). שאר העמודות מחושבות לבד. אפשר להוריד כ-CSV ולצרף לדוח.",
       depth: "עומק אפנון", left: "אונה שמאל", center: "אונה אמצעית", right: "אונה ימין", total: "סה״כ מתח", infoV: "מתח במידע", infoP: "הספק במידע", theoryP: "תאוריה \\(\\eta\\)",
-      csv: "הורדת CSV", report: "מה מגישים", files: "קבצי MATLAB", download: "הורדה", show: "הצגת הקוד", hide: "הסתרת הקוד",
+      csv: "הורדת CSV", report: "כתיבת הדוח והגשה במודל", repStruct: "מבנה הדוח", repStyle: "כללי כתיבה ועיצוב", repSubmit: "הגשה במודל", repCheck: "רשימת בדיקה לפני ההגשה", repCheckLead: "סמנו כל סעיף שבדקתם (נשמר בדפדפן).", files: "קבצי MATLAB", download: "הורדה", show: "הצגת הקוד", hide: "הסתרת הקוד",
       progress: (a, b) => `${a} מתוך ${b} שלבים`, reset: "איפוס", contents: "בדף הזה", watch: "שיעורים מומלצים לפני המעבדה",
       sim: "נסו בסימולטור", simAM: "סימולטור: AM ו-DSB-SC", simRX: "סימולטור: המקלט הסינכרוני", mode: "סוג אפנון", ka: "עומק אפנון",
       phase: "פאזת המתנד \\(\\phi\\)", df: "שגיאת תדר \\(\\Delta f\\)", timeAx: "זמן", freqAx: "תדר", carrier: "גל נושא", sidebands: "פסי צד", eff: "יעילות הספק",
@@ -566,7 +566,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       instruments: "Know your instruments", parts: "The experiment", step: "Step", done: "Done", forReport: "For the report", save: "Save", hint: "More explanation",
       settings: "Settings", table: "Table 1 (Part 3)", tableLead: "Enter the voltages you measured (in volts). The other columns are computed for you. Download as CSV and attach it to the report.",
       depth: "Depth", left: "Left line", center: "Center line", right: "Right line", total: "Total voltage", infoV: "Voltage in message", infoP: "Power in message", theoryP: "Theory \\(\\eta\\)",
-      csv: "Download CSV", report: "What to submit", files: "MATLAB files", download: "Download", show: "Show code", hide: "Hide code",
+      csv: "Download CSV", report: "Writing the report and submitting on Moodle", repStruct: "Report structure", repStyle: "Writing and format rules", repSubmit: "Submitting on Moodle", repCheck: "Checklist before you submit", repCheckLead: "Tick every item you have checked (saved in your browser).", files: "MATLAB files", download: "Download", show: "Show code", hide: "Hide code",
       progress: (a, b) => `${a} of ${b} steps`, reset: "Reset", contents: "On this page", watch: "Recommended lectures before the lab",
       sim: "Try it in the simulator", simAM: "Simulator: AM and DSB-SC", simRX: "Simulator: the synchronous receiver", mode: "Modulation", ka: "Depth",
       phase: "LO phase \\(\\phi\\)", df: "Frequency error \\(\\Delta f\\)", timeAx: "time", freqAx: "frequency", carrier: "Carrier", sidebands: "Sidebands", eff: "Power efficiency",
@@ -618,7 +618,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     const total = g.parts.reduce((s, p) => s + p.steps.length, 0);
     const watch = allLessons.filter((x) => x.course?.id === "comm" && x.tags?.some((k) => g.tags.includes(k))).slice(0, 3);
     const toc = [["goals", gt.goals], ["theory", gt.theory], ["prep", gt.prep], ["components", gt.components], ["instruments", gt.instruments],
-      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["figures", gt.figures], ["results", gt.tables], ["report", gt.report], ["files", gt.files]];
+      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["figures", gt.figures], ["results", gt.tables], ["files", gt.files], ["report", gt.report]];
     const FIG = (k) => (g.figures || []).find((f) => f.n === k);
     const step = (s) => {
       n += 1;
@@ -698,7 +698,6 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
             <button type="button" class="btn ghost" data-csv="phase">${gt.csv}</button>
           </section>
 
-          <section id="report"><h2>${gt.report}</h2><ul>${L(g, "report").map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>
 
           <section id="files"><h2>${gt.files}</h2>
             ${g.files.map((f) => `<div class="file-row">
@@ -706,6 +705,16 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
               <div class="file-actions"><a class="btn" href="${g.dir}/${f.file}" download>${gt.download}</a><button type="button" class="btn ghost" data-src="${g.dir}/${f.file}">${gt.show}</button></div>
               <pre class="src" hidden dir="ltr"><code></code></pre></div>`).join("")}
           </section>
+
+          ${g.report ? (() => { const r = g.report; return `<section id="report"><h2>${gt.report}</h2><p>${esc(tr(r, "lead"))}</p>
+            <h3>${gt.repStruct}</h3>
+            <ol class="rep-sections">${r.sections.map(([h, d, he, de]) => `<li><b>${esc(EN ? he : h)}</b><div>${EN ? de : d}</div></li>`).join("")}</ol>
+            <h3>${gt.repStyle}</h3><ul>${L(r, "style").map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+            <h3>${gt.repSubmit}</h3>
+            <ol class="rep-submit">${r.submit.map(([he, en, code]) => `<li>${esc(EN ? en : he)}${code ? ` <code dir="ltr">${esc(code)}</code>` : ""}</li>`).join("")}</ol>
+            <div class="rep-check"><h3>${gt.repCheck}</h3><p class="muted">${gt.repCheckLead}</p>
+              ${r.check.map(([he, en], k) => `<label><input type="checkbox" data-rc="${k}"> <span>${esc(EN ? en : he)}</span></label>`).join("")}</div>
+          </section>`; })() : ""}
         </div>
       </div>`;
   };
@@ -805,6 +814,12 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       a.href = URL.createObjectURL(new Blob([head + "\n" + rows.join("\n") + "\n"], { type: "text/csv" }));
       a.download = root.dataset.guide + (kind === "phase" ? "_phase.csv" : "_power.csv"); a.click();
     }));
+    // report checklist
+    const rkey = key + ":report"; let rc = load(rkey, []);
+    app.querySelectorAll("[data-rc]").forEach((b) => {
+      b.checked = rc.includes(+b.dataset.rc);
+      b.addEventListener("change", () => { const k = +b.dataset.rc; rc = b.checked ? [...new Set([...rc, k])] : rc.filter((x) => x !== k); store(rkey, rc); });
+    });
     // code viewers
     app.querySelectorAll("[data-src]").forEach((b) => b.addEventListener("click", async () => {
       const pre = b.closest(".file-row").querySelector("pre");
