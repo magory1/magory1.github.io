@@ -548,25 +548,35 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     he: { guides: "מדריכי מעבדה אינטרנטיים", guidesLead: "מדריכים שלב אחר שלב לביצוע המעבדות: רקע, הכנה, חיבורים והגדרות, שאלות לדוח וקבצי MATLAB.",
       open: "למדריך", goals: "מטרות המעבדה", equipment: "ציוד", theory: "רקע תאורטי", prep: "לפני המעבדה", prepQ: "שאלות הכנה (להגשה לפני המעבדה)",
       instruments: "הכרת הציוד", parts: "הניסוי", step: "שלב", done: "בוצע", forReport: "לדוח", save: "לשמור", hint: "הסבר נוסף",
-      settings: "הגדרות", table: "טבלת תוצאות (חלק 3)", tableLead: "הכניסו את המתחים שמדדתם (ב-Volts). שאר העמודות מחושבות לבד. אפשר להוריד כ-CSV ולצרף לדוח.",
+      settings: "הגדרות", table: "טבלה 1 (חלק 3)", tableLead: "הכניסו את המתחים שמדדתם (ב-Volts). שאר העמודות מחושבות לבד. אפשר להוריד כ-CSV ולצרף לדוח.",
       depth: "עומק אפנון", left: "אונה שמאל", center: "אונה אמצעית", right: "אונה ימין", total: "סה״כ מתח", infoV: "מתח במידע", infoP: "הספק במידע", theoryP: "תאוריה \\(\\eta\\)",
       csv: "הורדת CSV", report: "מה מגישים", files: "קבצי MATLAB", download: "הורדה", show: "הצגת הקוד", hide: "הסתרת הקוד",
       progress: (a, b) => `${a} מתוך ${b} שלבים`, reset: "איפוס", contents: "בדף הזה", watch: "שיעורים מומלצים לפני המעבדה",
       sim: "נסו בסימולטור", simAM: "סימולטור: AM ו-DSB-SC", simRX: "סימולטור: המקלט הסינכרוני", mode: "סוג אפנון", ka: "עומק אפנון",
       phase: "פאזת המתנד \\(\\phi\\)", df: "שגיאת תדר \\(\\Delta f\\)", timeAx: "זמן", freqAx: "תדר", carrier: "גל נושא", sidebands: "פסי צד", eff: "יעילות הספק",
       rxNote: "המידע (8 Hz לצורך התצוגה) במוצא המקלט, ובכתום המעטפת \\(\\tfrac12\\cos(\\phi + 2\\pi\\Delta f t)\\).", minutes: "משך", course: "קורס",
-      inCourse: "המעבדות בקורס", fromRx: "המקלט" },
+      inCourse: "המעבדות בקורס", fromRx: "המקלט",
+      components: "הרכיבים", compLead: "כל מה שמחברים בניסוי. התמונות מהמעבדה; לרכיבים בלי תמונה מופיע הסמל שלהם בסכמות.", ports: "חיבורים", usedIn: "חלקים", careful: "שימו לב",
+      figures: "איורים לדוח", figLead: "אלה האיורים שמגישים, לפי הסדר. כל שלב שבו מצלמים מסומן ב-📷 עם מספר האיור.", figRulesH: "כללים לאיור טוב", fig: "איור", part: "חלק",
+      figSet: "הגדרות", figShow: "מה צריך לראות", figCheck: "השוו לתאוריה", kinds: { scope: "סקופ", spec: "נתח ספקטרום", graph: "גרף MATLAB" },
+      tables: "טבלאות תוצאות", table1: "טבלה 1 – חלוקת ההספק (חלק 3)", table2: "טבלה 2 – משרעת מול פאזה (חלק 4)",
+      table2Lead: "הכניסו את משרעת המידע (Pk-Pk) בכל פאזה. העמודה המנורמלת מחולקת בערך ב-0°.", phaseCol: "פאזה", ampCol: "משרעת", normCol: "מנורמל" },
     en: { guides: "Online lab guides", guidesLead: "Step-by-step guides for doing the labs: background, preparation, wiring and settings, report questions and MATLAB files.",
       open: "Open guide", goals: "Goals", equipment: "Equipment", theory: "Background", prep: "Before the lab", prepQ: "Preparation questions (submit before the lab)",
       instruments: "Know your instruments", parts: "The experiment", step: "Step", done: "Done", forReport: "For the report", save: "Save", hint: "More explanation",
-      settings: "Settings", table: "Results table (Part 3)", tableLead: "Enter the voltages you measured (in volts). The other columns are computed for you. Download as CSV and attach it to the report.",
+      settings: "Settings", table: "Table 1 (Part 3)", tableLead: "Enter the voltages you measured (in volts). The other columns are computed for you. Download as CSV and attach it to the report.",
       depth: "Depth", left: "Left line", center: "Center line", right: "Right line", total: "Total voltage", infoV: "Voltage in message", infoP: "Power in message", theoryP: "Theory \\(\\eta\\)",
       csv: "Download CSV", report: "What to submit", files: "MATLAB files", download: "Download", show: "Show code", hide: "Hide code",
       progress: (a, b) => `${a} of ${b} steps`, reset: "Reset", contents: "On this page", watch: "Recommended lectures before the lab",
       sim: "Try it in the simulator", simAM: "Simulator: AM and DSB-SC", simRX: "Simulator: the synchronous receiver", mode: "Modulation", ka: "Depth",
       phase: "LO phase \\(\\phi\\)", df: "Frequency error \\(\\Delta f\\)", timeAx: "time", freqAx: "frequency", carrier: "Carrier", sidebands: "Sidebands", eff: "Power efficiency",
       rxNote: "The message (8 Hz for display) at the receiver output; orange is the envelope \\(\\tfrac12\\cos(\\phi + 2\\pi\\Delta f t)\\).", minutes: "Duration", course: "Course",
-      inCourse: "Labs in this course", fromRx: "Receiver" },
+      inCourse: "Labs in this course", fromRx: "Receiver",
+      components: "The components", compLead: "Everything you connect in this lab. Photos are from the lab; parts without a photo show the symbol used in the diagrams.", ports: "Ports", usedIn: "Parts", careful: "Careful",
+      figures: "Figures for the report", figLead: "These are the figures you submit, in order. Every step where you capture one is marked 📷 with the figure number.", figRulesH: "Rules for a good figure", fig: "Figure", part: "Part",
+      figSet: "Settings", figShow: "What it must show", figCheck: "Compare with theory", kinds: { scope: "Scope", spec: "Spectrum analyzer", graph: "MATLAB graph" },
+      tables: "Results tables", table1: "Table 1 – power split (Part 3)", table2: "Table 2 – amplitude versus phase (Part 4)",
+      table2Lead: "Enter the message amplitude (Pk-Pk) at each phase. The normalized column is divided by the 0° value.", phaseCol: "Phase", ampCol: "Amplitude", normCol: "Normalized" },
   };
   const G = () => (EN ? GT.en : GT.he);
   const GUIDE_LIST = window.GUIDES || [];
@@ -607,8 +617,9 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     let n = 0;
     const total = g.parts.reduce((s, p) => s + p.steps.length, 0);
     const watch = allLessons.filter((x) => x.course?.id === "comm" && x.tags?.some((k) => g.tags.includes(k))).slice(0, 3);
-    const toc = [["goals", gt.goals], ["theory", gt.theory], ["prep", gt.prep], ["instruments", gt.instruments],
-      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["results", gt.table], ["report", gt.report], ["files", gt.files]];
+    const toc = [["goals", gt.goals], ["theory", gt.theory], ["prep", gt.prep], ["components", gt.components], ["instruments", gt.instruments],
+      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["figures", gt.figures], ["results", gt.tables], ["report", gt.report], ["files", gt.files]];
+    const FIG = (k) => (g.figures || []).find((f) => f.n === k);
     const step = (s) => {
       n += 1;
       const q = L(s, "q");
@@ -618,10 +629,11 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
           <p>${tr(s, "do")}</p>
           ${s.set ? `<div class="panel" dir="ltr">${s.set.map(([k, he, en]) => `<div><b>${esc(k)}</b><span>${esc(EN ? en : he)}</span></div>`).join("")}</div>` : ""}
           ${q.length ? `<div class="ask"><b>${gt.forReport}</b><ul>${q.map((x) => `<li>${x}</li>`).join("")}</ul></div>` : ""}
-          ${s.rec ? `<div class="rec">📷 ${gt.save}: ${esc(tr(s, "rec"))}</div>` : ""}
+          ${(s.fig || []).map((k) => `<button type="button" class="rec" data-goto="fig-${k}">📷 ${gt.fig} ${k}: ${esc(tr(FIG(k), "t"))}</button>`).join("")}
           ${s.hint ? `<details class="hint"><summary>${gt.hint}</summary><p>${tr(s, "hint")}</p></details>` : ""}
           ${s.sim ? `<button type="button" class="btn ghost small" data-goto="${s.sim === "rx" ? "sim-rx" : "sim-am"}">${gt.sim} ↑</button>` : ""}
           ${s.table ? `<button type="button" class="btn ghost small" data-goto="results">${gt.table} ↓</button>` : ""}
+          ${s.table2 ? `<button type="button" class="btn ghost small" data-goto="table2">${gt.table2} ↓</button>` : ""}
         </div></li>`;
     };
     return `
@@ -650,6 +662,15 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
             ${watch.length ? `<h3>${gt.watch}</h3><div class="grid">${watch.map((x) => thumbCard(x, `${P()}/course/${x.course.id}/${x.id}`)).join("")}</div>` : ""}
           </section>
 
+          ${g.components ? `<section id="components"><h2>${gt.components}</h2><p class="muted">${gt.compLead}</p>
+            <div class="comp-grid">${g.components.map((x) => `<article class="comp">
+              <div class="comp-img${x.img.length > 1 ? " two" : ""}">${x.img.map((f) => `<a href="${g.dir}/${f}" target="_blank" rel="noopener"><img loading="lazy" src="${g.dir}/${f}" alt="${esc(tr(x, "name"))}"${f.endsWith(".svg") ? ' class="sym"' : ""}></a>`).join("")}</div>
+              <div class="comp-body"><h3>${esc(tr(x, "name"))}</h3><div class="comp-model"><bdi dir="ltr">${esc(x.model)}</bdi></div>
+                <p>${tr(x, "role")}</p>
+                ${x.ports.length ? `<dl class="comp-ports"><dt>${gt.ports}</dt>${x.ports.map(([k, he, en]) => `<dd><b dir="ltr">${esc(k)}</b> ${esc(EN ? en : he)}</dd>`).join("")}</dl>` : ""}
+                <p class="comp-tip"><b>${gt.careful}:</b> ${esc(tr(x, "tip"))}</p>
+                <div class="comp-used">${gt.usedIn}: ${esc(x.parts)}</div></div></article>`).join("")}</div></section>` : ""}
+
           <section id="instruments"><h2>${gt.instruments}</h2>
             ${g.instruments.map((x) => `<details class="instr"><summary>${esc(tr(x, "h"))}</summary><p>${esc(tr(x, "body"))}</p></details>`).join("")}
           </section>
@@ -657,12 +678,24 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
           ${g.parts.map((p, i) => `<section id="part${i + 1}" class="part"><h2>${esc(tr(p, "title"))}</h2><p class="muted">${esc(tr(p, "goal"))}</p>
             ${figHtml(g, p.diagram)}<ol class="steps" start="${n + 1}">${p.steps.map(step).join("")}</ol></section>`).join("")}
 
-          <section id="results"><h2>${gt.table}</h2><p class="muted">${gt.tableLead}</p>
-            <div class="table-wrap"><table class="results" dir="ltr">
+          ${g.figures ? `<section id="figures"><h2>${gt.figures}</h2><p class="muted">${gt.figLead}</p>
+            <div class="fig-rules"><b>${gt.figRulesH}</b><ul>${L(g, "figRules").map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>
+            <ol class="fig-list">${g.figures.map((f) => `<li class="figreq k-${f.kind}" id="fig-${f.n}">
+              <div class="figreq-head"><span class="fignum">${gt.fig} ${f.n}</span><b>${esc(tr(f, "t"))}</b><span class="chip">${gt.part} ${f.part} · ${gt.kinds[f.kind]}</span></div>
+              <dl><dt>${gt.figSet}</dt><dd dir="auto">${esc(tr(f, "set"))}</dd><dt>${gt.figShow}</dt><dd>${tr(f, "show")}</dd><dt>${gt.figCheck}</dt><dd>${tr(f, "check")}</dd></dl></li>`).join("")}</ol></section>` : ""}
+
+          <section id="results"><h2>${gt.tables}</h2><h3>${gt.table1}</h3><p class="muted">${gt.tableLead}</p>
+            <div class="table-wrap"><table class="results power" dir="ltr">
               <thead><tr><th>${gt.depth}</th><th>${gt.left} [V]</th><th>${gt.center} [V]</th><th>${gt.right} [V]</th><th>${gt.total} [V]</th><th>${gt.infoV}</th><th>${gt.infoP}</th><th>${gt.theoryP}</th></tr></thead>
               <tbody>${[30, 50, 70, 100].map((d) => `<tr data-d="${d}"><td>${d}%</td>${["l", "c", "r"].map((k) => `<td><input type="number" step="0.001" min="0" inputmode="decimal" data-v="${k}" aria-label="${d}% ${k}"></td>`).join("")}<td data-o="tot">–</td><td data-o="iv">–</td><td data-o="ip">–</td><td>${(100 * (d / 100) ** 2 / (2 + (d / 100) ** 2)).toFixed(1)}%</td></tr>`).join("")}</tbody>
             </table></div>
-            <button type="button" class="btn ghost" data-csv>${gt.csv}</button>
+            <button type="button" class="btn ghost" data-csv="results">${gt.csv}</button>
+            <h3 id="table2">${gt.table2}</h3><p class="muted">${gt.table2Lead}</p>
+            <div class="table-wrap"><table class="results phase" dir="ltr">
+              <thead><tr><th>${gt.phaseCol} φ</th><th>${gt.ampCol} [Vpp]</th><th>${gt.normCol}</th><th>cos φ</th></tr></thead>
+              <tbody>${[0, 30, 60, 90].map((d) => `<tr data-p="${d}"><td>${d}°</td><td><input type="number" step="0.001" min="0" inputmode="decimal" data-v="a" aria-label="${d}°"></td><td data-o="nrm">–</td><td>${Math.cos(d * Math.PI / 180).toFixed(3)}</td></tr>`).join("")}</tbody>
+            </table></div>
+            <button type="button" class="btn ghost" data-csv="phase">${gt.csv}</button>
           </section>
 
           <section id="report"><h2>${gt.report}</h2><ul>${L(g, "report").map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>
@@ -742,7 +775,12 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     // results table
     const tkey = key + ":table", tv = load(tkey, {});
     const calc = () => {
-      app.querySelectorAll(".results tbody tr").forEach((tr_) => {
+      const a0 = parseFloat(app.querySelector('.results.phase tr[data-p="0"] input')?.value);
+      app.querySelectorAll(".results.phase tbody tr").forEach((tr_) => {
+        const v = parseFloat(tr_.querySelector("input").value);
+        tr_.querySelector('[data-o="nrm"]').textContent = v >= 0 && a0 > 0 ? (v / a0).toFixed(3) : "–";
+      });
+      app.querySelectorAll(".results.power tbody tr").forEach((tr_) => {
         const v = {}; tr_.querySelectorAll("input").forEach((i) => { v[i.dataset.v] = parseFloat(i.value); });
         const ok = ["l", "c", "r"].every((k) => v[k] >= 0);
         const tot = v.l + v.c + v.r, P_ = v.l ** 2 + v.c ** 2 + v.r ** 2;
@@ -752,17 +790,21 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       });
     };
     app.querySelectorAll(".results input").forEach((i) => {
-      const id = i.closest("tr").dataset.d + i.dataset.v;
+      const r_ = i.closest("tr"), id = r_.dataset.d ? r_.dataset.d + i.dataset.v : "p" + r_.dataset.p;
       if (tv[id] != null) i.value = tv[id];
       i.addEventListener("input", () => { tv[id] = i.value; store(tkey, tv); calc(); });
     });
     calc();
-    app.querySelector("[data-csv]").addEventListener("click", () => {
-      const rows = [...app.querySelectorAll(".results tr")].map((r) => [...r.children].map((c) => (c.querySelector("input")?.value ?? c.textContent).replace(/\\\(|\\\)|\\eta/g, "").trim()).join(","));
+    // CSV: plain numbers with a one-line header, so MATLAB readmatrix can read it
+    const num = (s) => s.replace(/[%°–]/g, "").trim();
+    app.querySelectorAll("[data-csv]").forEach((b) => b.addEventListener("click", () => {
+      const kind = b.dataset.csv, sel = kind === "phase" ? ".results.phase" : ".results.power";
+      const head = kind === "phase" ? "phase_deg,amp_Vpp,normalized,cos_phi" : "depth_pct,left_V,center_V,right_V,total_V,info_V_pct,info_P_pct,theory_P_pct";
+      const rows = [...app.querySelectorAll(sel + " tbody tr")].map((r) => [...r.children].map((c) => num(c.querySelector("input")?.value ?? c.textContent)).join(","));
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob(["﻿" + rows.join("\n")], { type: "text/csv" }));
-      a.download = root.dataset.guide + "_results.csv"; a.click();
-    });
+      a.href = URL.createObjectURL(new Blob([head + "\n" + rows.join("\n") + "\n"], { type: "text/csv" }));
+      a.download = root.dataset.guide + (kind === "phase" ? "_phase.csv" : "_power.csv"); a.click();
+    }));
     // code viewers
     app.querySelectorAll("[data-src]").forEach((b) => b.addEventListener("click", async () => {
       const pre = b.closest(".file-row").querySelector("pre");

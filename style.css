@@ -410,3 +410,37 @@ table.results input { width: 80px; font: inherit; padding: 4px; border: 1px soli
 .file-actions { display: flex; gap: 8px; }
 .file-actions .btn { font: inherit; font-size: 15px; cursor: pointer; }
 @media (max-width: 600px) { .file-row { grid-template-columns: 1fr; } }
+/* guide: components */
+.comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; margin-top: 12px; }
+.comp { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; display: flex; flex-direction: column; }
+.comp-img { background: #fff; display: flex; gap: 6px; align-items: center; justify-content: center; height: 190px; padding: 8px; border-bottom: 1px solid var(--line); }
+.comp-img a { height: 100%; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.comp-img img { max-height: 100%; max-width: 100%; object-fit: contain; border-radius: 4px; }
+.comp-img.two a:first-child { flex: 1.6; } .comp-img.two a:last-child { flex: 1; }
+.comp-img img.sym { max-height: 150px; }
+.comp-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.comp-body h3 { margin: 0; font-size: 1.05rem; }
+.comp-body p { margin: 0; }
+.comp-model { color: var(--muted); font-size: .85rem; }
+.comp-ports { margin: 2px 0; }
+.comp-ports dt { font-weight: 600; font-size: .85rem; color: var(--muted); }
+.comp-ports dd { margin: 2px 0; }
+.comp-ports dd b { display: inline-block; min-width: 2.2em; padding: 0 6px; margin-inline-end: 4px; border-radius: 4px; background: var(--accent-soft, #e8f0fa); color: var(--accent); text-align: center; }
+.comp-tip { font-size: .92rem; background: rgba(232, 137, 43, .12); border-inline-start: 3px solid #e8892b; padding: 6px 10px; border-radius: 4px; }
+.comp-used { margin-top: auto; font-size: .82rem; color: var(--muted); }
+/* guide: figures for the report */
+.fig-rules { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: var(--surface); margin: 10px 0 14px; }
+.fig-rules ul { margin: 6px 0 0; }
+.fig-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.figreq { border: 1px solid var(--line); border-inline-start: 4px solid var(--accent); border-radius: 8px; padding: 10px 14px; background: var(--surface); scroll-margin-top: 80px; }
+.figreq.k-spec { border-inline-start-color: #e8892b; } .figreq.k-graph { border-inline-start-color: #2e9e5b; }
+.figreq-head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.fignum { font-weight: 700; color: var(--accent); white-space: nowrap; }
+.figreq .chip { margin-inline-start: auto; font-size: .8rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.figreq dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0 0; }
+.figreq dt { color: var(--muted); font-size: .88rem; }
+.figreq dd { margin: 0; }
+@media (max-width: 560px) { .figreq dl { grid-template-columns: 1fr; } .figreq dd { margin-bottom: 4px; } .figreq .chip { margin-inline-start: 0; } }
+button.rec { display: block; text-align: start; font-family: inherit; background: none; border: 0; padding: 0; cursor: pointer; color: var(--accent); }
+button.rec:hover { text-decoration: underline; }
+#table2 { scroll-margin-top: 80px; margin-top: 22px; }
