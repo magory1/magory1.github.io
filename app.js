@@ -208,7 +208,7 @@
   /* home: academic profile page */
   const HOME = {
     he: {
-      position: "מרצה בהנדסת חשמל ותקשורת",
+      position: "מרצה, המחלקה להנדסת חשמל ואלקטרוניקה",
       bio: [
         "ד״ר אייל מגורי מלמד במרכז האקדמי לב (JCT) בירושלים קורסים בתקשורת, באותות ומערכות, באנטנות ובתורת האינפורמציה. המחקר שלו עוסק בחישה במכ״ם mmWave, בהדמיה ובעיבוד אותות.",
         "הוא מקים במכון לב מעבדה לתקשורת, RF ומכ״ם, שבה סטודנטים עובדים על ציוד אמיתי – ומשתף את כל ההרצאות והמעבדות באתר הזה, בחינם.",
@@ -223,7 +223,7 @@
       summary: (c, l, h) => `${c} קורסים · ${l} הרצאות · ${h}+ שעות לימוד`,
     },
     en: {
-      position: "Lecturer in Electrical and Communication Engineering",
+      position: "Lecturer, Department of Electrical and Electronics Engineering",
       bio: [
         "Dr. Eyal Magory teaches communication systems, signals and systems, antennas and information theory at the Jerusalem College of Technology (JCT). His research focuses on mmWave radar sensing, imaging and signal processing.",
         "He is building a communication, RF and radar lab at JCT, where students work on real hardware – and shares all lectures and labs on this site, free of charge.",
@@ -245,10 +245,14 @@
     return `
       <section class="profile"><div class="wrap profile-grid">
         <div>
-          ${photo}
-          <h1>${esc(tr(SITE, "owner"))}</h1>
-          <div class="position">${h.position}</div>
-          <div class="affil">${instBadge()}${esc(tr(LAB, "inst"))}</div>
+          <div class="profile-head">
+            ${photo}
+            <div>
+              <h1>${esc(tr(SITE, "owner"))}</h1>
+              <div class="position">${h.position}</div>
+              <div class="affil">${instBadge()}${esc(tr(LAB, "inst"))}</div>
+            </div>
+          </div>
           ${h.bio.map((p) => `<p>${esc(p)}</p>`).join("")}
           <ul class="contact">
             <li><span>${h.email}</span> <a href="mailto:${esc(SITE.email)}" dir="ltr">${esc(SITE.email)}</a></li>
