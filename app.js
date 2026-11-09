@@ -346,6 +346,7 @@
         <p class="muted">${esc(tr(c, "summary"))}</p>
         <p class="muted" style="font-size:15px">${ls.length} ${t.videos} · ${t.approxHours(hours(ls))} · ${t.recordings} ${esc(tr(c, "year"))} · <a href="${ytList(c.playlist)}" target="_blank" rel="noopener">${t.playlistYT}</a></p>
         ${langNote(c)}
+        ${GUIDE_LIST.some((g) => g.course === c.id) ? `<div class="course-guides"><b>${G().guides}:</b> ${GUIDE_LIST.filter((g) => g.course === c.id).map((g) => `<a href="${P()}/guide/${g.id}">${esc(tr(g, "title"))}</a>`).join(" · ")}</div>` : ""}
       </div>
       <div class="wrap course-layout">
         <div>
@@ -471,6 +472,11 @@
         <div><h2>${t.vision}</h2>${(EN ? LAB.vision_en : LAB.vision).map((p) => `<p>${esc(p)}</p>`).join("")}</div>
         <div class="card"><h3>${t.equipment}</h3><ul class="eq">${LAB.equipment.map((e) => `<li>${esc(EN ? e.en : e.he)}</li>`).join("")}</ul></div>
       </div></section>
+      ${GUIDE_LIST.length ? `<section class="block"><div class="wrap">
+        <div class="section-head"><h2>${G().guides}</h2></div>
+        <p class="muted" style="margin-top:-6px">${G().guidesLead}</p>
+        <div class="grid">${GUIDE_LIST.map(guideCard).join("")}</div>
+      </div></section>` : ""}
       <section class="block"><div class="wrap">
         <div class="section-head"><h2>${t.sdrTitle}</h2><a href="${REPO}" target="_blank" rel="noopener">${t.allCode}</a></div>
         <p class="muted" style="margin-top:-6px">${t.sdrLead}</p>
@@ -536,6 +542,245 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
         </nav>
       </div>`;
   };
+
+  /* ---------- online lab guides (guides.js) ---------- */
+  const GT = {
+    he: { guides: "מדריכי מעבדה אינטרנטיים", guidesLead: "מדריכים שלב אחר שלב לביצוע המעבדות: רקע, הכנה, חיבורים והגדרות, שאלות לדוח וקבצי MATLAB.",
+      open: "למדריך", goals: "מטרות המעבדה", equipment: "ציוד", theory: "רקע תאורטי", prep: "לפני המעבדה", prepQ: "שאלות הכנה (להגשה לפני המעבדה)",
+      instruments: "הכרת הציוד", parts: "הניסוי", step: "שלב", done: "בוצע", forReport: "לדוח", save: "לשמור", hint: "הסבר נוסף",
+      settings: "הגדרות", table: "טבלת תוצאות (חלק 3)", tableLead: "הכניסו את המתחים שמדדתם (ב-Volts). שאר העמודות מחושבות לבד. אפשר להוריד כ-CSV ולצרף לדוח.",
+      depth: "עומק אפנון", left: "אונה שמאל", center: "אונה אמצעית", right: "אונה ימין", total: "סה״כ מתח", infoV: "מתח במידע", infoP: "הספק במידע", theoryP: "תאוריה \\(\\eta\\)",
+      csv: "הורדת CSV", report: "מה מגישים", files: "קבצי MATLAB", download: "הורדה", show: "הצגת הקוד", hide: "הסתרת הקוד",
+      progress: (a, b) => `${a} מתוך ${b} שלבים`, reset: "איפוס", contents: "בדף הזה", watch: "שיעורים מומלצים לפני המעבדה",
+      sim: "נסו בסימולטור", simAM: "סימולטור: AM ו-DSB-SC", simRX: "סימולטור: המקלט הסינכרוני", mode: "סוג אפנון", ka: "עומק אפנון",
+      phase: "פאזת המתנד \\(\\phi\\)", df: "שגיאת תדר \\(\\Delta f\\)", timeAx: "זמן", freqAx: "תדר", carrier: "גל נושא", sidebands: "פסי צד", eff: "יעילות הספק",
+      rxNote: "המידע (8 Hz לצורך התצוגה) במוצא המקלט, ובכתום המעטפת \\(\\tfrac12\\cos(\\phi + 2\\pi\\Delta f t)\\).", minutes: "משך", course: "קורס",
+      inCourse: "המעבדות בקורס", fromRx: "המקלט" },
+    en: { guides: "Online lab guides", guidesLead: "Step-by-step guides for doing the labs: background, preparation, wiring and settings, report questions and MATLAB files.",
+      open: "Open guide", goals: "Goals", equipment: "Equipment", theory: "Background", prep: "Before the lab", prepQ: "Preparation questions (submit before the lab)",
+      instruments: "Know your instruments", parts: "The experiment", step: "Step", done: "Done", forReport: "For the report", save: "Save", hint: "More explanation",
+      settings: "Settings", table: "Results table (Part 3)", tableLead: "Enter the voltages you measured (in volts). The other columns are computed for you. Download as CSV and attach it to the report.",
+      depth: "Depth", left: "Left line", center: "Center line", right: "Right line", total: "Total voltage", infoV: "Voltage in message", infoP: "Power in message", theoryP: "Theory \\(\\eta\\)",
+      csv: "Download CSV", report: "What to submit", files: "MATLAB files", download: "Download", show: "Show code", hide: "Hide code",
+      progress: (a, b) => `${a} of ${b} steps`, reset: "Reset", contents: "On this page", watch: "Recommended lectures before the lab",
+      sim: "Try it in the simulator", simAM: "Simulator: AM and DSB-SC", simRX: "Simulator: the synchronous receiver", mode: "Modulation", ka: "Depth",
+      phase: "LO phase \\(\\phi\\)", df: "Frequency error \\(\\Delta f\\)", timeAx: "time", freqAx: "frequency", carrier: "Carrier", sidebands: "Sidebands", eff: "Power efficiency",
+      rxNote: "The message (8 Hz for display) at the receiver output; orange is the envelope \\(\\tfrac12\\cos(\\phi + 2\\pi\\Delta f t)\\).", minutes: "Duration", course: "Course",
+      inCourse: "Labs in this course", fromRx: "Receiver" },
+  };
+  const G = () => (EN ? GT.en : GT.he);
+  const GUIDE_LIST = window.GUIDES || [];
+  const guideCard = (g) => {
+    const c = COURSES.find((x) => x.id === g.course);
+    return `<a class="card guide-card" href="${P()}/guide/${g.id}">
+      <img loading="lazy" src="${g.dir}/${g.theory[0].fig}" alt="">
+      <div class="code">${c ? `${T().course} ${esc(c.code)} · ` : ""}${esc(tr(g, "time"))}</div>
+      <h3>${esc(tr(g, "title"))}</h3><div class="muted">${esc(tr(g, "summary"))}</div></a>`;
+  };
+  const figHtml = (g, f, cap = "") => f ? `<figure class="fig${f.endsWith(".svg") ? " diagram" : ""}"><a href="${g.dir}/${f}" target="_blank" rel="noopener"><img loading="lazy" src="${g.dir}/${f}" alt="${esc(cap)}"></a>${cap ? `<figcaption>${esc(cap)}</figcaption>` : ""}</figure>` : "";
+  const simAM = () => { const g = G(); return `
+    <div class="sim" data-sim="am">
+      <h3>${g.simAM}</h3>
+      <div class="sim-controls">
+        <label>${g.mode} <select data-k="mode"><option value="am">AM</option><option value="dsb">DSB-SC</option></select></label>
+        <label>${g.ka} <input type="range" min="0" max="150" value="50" data-k="ka"> <output data-o="ka">50%</output></label>
+      </div>
+      <canvas data-c="t" height="190"></canvas>
+      <div class="sim-row"><canvas data-c="f" height="150"></canvas><div class="sim-read" data-o="read"></div></div>
+    </div>`; };
+  const simRX = () => { const g = G(); return `
+    <div class="sim" data-sim="rx">
+      <h3>${g.simRX}</h3>
+      <div class="sim-controls">
+        <label>${g.phase} <input type="range" min="0" max="180" value="0" step="5" data-k="ph"> <output data-o="ph">0°</output></label>
+        <label>${g.df} <input type="range" min="0" max="4" value="0" step="0.5" data-k="df"> <output data-o="df">0 Hz</output></label>
+      </div>
+      <canvas data-c="t" height="200"></canvas>
+      <p class="muted sim-note">${g.rxNote}</p>
+    </div>`; };
+
+  pages.guide = (id) => {
+    const g = GUIDE_LIST.find((x) => x.id === id);
+    if (!g) return pages.notfound();
+    const t = T(), gt = G(), c = COURSES.find((x) => x.id === g.course);
+    const L = (o, k) => (EN ? o[k + "_en"] : o[k]) || o[k] || [];
+    let n = 0;
+    const total = g.parts.reduce((s, p) => s + p.steps.length, 0);
+    const watch = allLessons.filter((x) => x.course?.id === "comm" && x.tags?.some((k) => g.tags.includes(k))).slice(0, 3);
+    const toc = [["goals", gt.goals], ["theory", gt.theory], ["prep", gt.prep], ["instruments", gt.instruments],
+      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["results", gt.table], ["report", gt.report], ["files", gt.files]];
+    const step = (s) => {
+      n += 1;
+      const q = L(s, "q");
+      return `<li class="step" id="step${n}">
+        <label class="step-check"><input type="checkbox" data-step="${n}"><span>${gt.step} ${n}</span></label>
+        <div class="step-body">
+          <p>${tr(s, "do")}</p>
+          ${s.set ? `<div class="panel" dir="ltr">${s.set.map(([k, he, en]) => `<div><b>${esc(k)}</b><span>${esc(EN ? en : he)}</span></div>`).join("")}</div>` : ""}
+          ${q.length ? `<div class="ask"><b>${gt.forReport}</b><ul>${q.map((x) => `<li>${x}</li>`).join("")}</ul></div>` : ""}
+          ${s.rec ? `<div class="rec">📷 ${gt.save}: ${esc(tr(s, "rec"))}</div>` : ""}
+          ${s.hint ? `<details class="hint"><summary>${gt.hint}</summary><p>${tr(s, "hint")}</p></details>` : ""}
+          ${s.sim ? `<button type="button" class="btn ghost small" data-goto="${s.sim === "rx" ? "sim-rx" : "sim-am"}">${gt.sim} ↑</button>` : ""}
+          ${s.table ? `<button type="button" class="btn ghost small" data-goto="results">${gt.table} ↓</button>` : ""}
+        </div></li>`;
+    };
+    return `
+      <div class="wrap page-head">
+        <div class="crumbs"><a href="${P()}/lab">${t.nav.lab}</a>${c ? ` / <a href="${P()}/course/${c.id}">${esc(tr(c, "title"))}</a>` : ""}</div>
+        <h1>${esc(tr(g, "title"))}</h1>
+        <p class="muted">${esc(tr(g, "summary"))}</p>
+        <div class="guide-meta">${c ? `<span>${gt.course} ${esc(c.code)}</span>` : ""}<span>${gt.minutes}: ${esc(tr(g, "time"))}</span>
+          <span class="progress"><span class="bar"><i data-o="bar"></i></span><span data-o="prog">${gt.progress(0, total)}</span> <button type="button" class="link" data-reset>${gt.reset}</button></span></div>
+      </div>
+      <div class="wrap guide" data-guide="${g.id}" data-total="${total}">
+        <aside class="guide-toc"><b>${gt.contents}</b>${toc.map(([k, v]) => `<button type="button" data-goto="${k}">${esc(v)}</button>`).join("")}</aside>
+        <div class="guide-main">
+          <section id="goals"><h2>${gt.goals}</h2><ul>${L(g, "goals").map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+            <h3>${gt.equipment}</h3><ul class="eq">${L(g, "equipment").map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>
+
+          <section id="theory"><h2>${gt.theory}</h2>
+            ${g.theory.map((s, i) => `<div class="theory-block"><h3>${esc(tr(s, "h"))}</h3>${figHtml(g, s.fig)}${tr(s, "body")}${figHtml(g, s.fig2)}
+              ${i === 1 ? `<div id="sim-am">${simAM()}</div>` : ""}${i === g.theory.length - 1 ? `<div id="sim-rx">${simRX()}</div>` : ""}</div>`).join("")}
+          </section>
+
+          <section id="prep"><h2>${gt.prep}</h2>
+            <h3>${gt.prepQ}</h3>
+            <ol class="prep">${g.prep.map((p) => `<li><p>${tr(p, "q")}</p>${figHtml(g, p.fig)}${L(p, "items").length ? `<ol type="a">${L(p, "items").map((x) => `<li>${x}</li>`).join("")}</ol>` : ""}</li>`).join("")}</ol>
+            <p>${EN ? "Run" : "הריצו את"} <a href="${g.dir}/${g.files[0].file}" download dir="ltr">${g.files[0].file}</a> ${EN ? "to explore the signals before the lab." : "כדי לשחק עם האותות לפני המעבדה."}</p>
+            ${watch.length ? `<h3>${gt.watch}</h3><div class="grid">${watch.map((x) => thumbCard(x, `${P()}/course/${x.course.id}/${x.id}`)).join("")}</div>` : ""}
+          </section>
+
+          <section id="instruments"><h2>${gt.instruments}</h2>
+            ${g.instruments.map((x) => `<details class="instr"><summary>${esc(tr(x, "h"))}</summary><p>${esc(tr(x, "body"))}</p></details>`).join("")}
+          </section>
+
+          ${g.parts.map((p, i) => `<section id="part${i + 1}" class="part"><h2>${esc(tr(p, "title"))}</h2><p class="muted">${esc(tr(p, "goal"))}</p>
+            ${figHtml(g, p.diagram)}<ol class="steps" start="${n + 1}">${p.steps.map(step).join("")}</ol></section>`).join("")}
+
+          <section id="results"><h2>${gt.table}</h2><p class="muted">${gt.tableLead}</p>
+            <div class="table-wrap"><table class="results" dir="ltr">
+              <thead><tr><th>${gt.depth}</th><th>${gt.left} [V]</th><th>${gt.center} [V]</th><th>${gt.right} [V]</th><th>${gt.total} [V]</th><th>${gt.infoV}</th><th>${gt.infoP}</th><th>${gt.theoryP}</th></tr></thead>
+              <tbody>${[30, 50, 70, 100].map((d) => `<tr data-d="${d}"><td>${d}%</td>${["l", "c", "r"].map((k) => `<td><input type="number" step="0.001" min="0" inputmode="decimal" data-v="${k}" aria-label="${d}% ${k}"></td>`).join("")}<td data-o="tot">–</td><td data-o="iv">–</td><td data-o="ip">–</td><td>${(100 * (d / 100) ** 2 / (2 + (d / 100) ** 2)).toFixed(1)}%</td></tr>`).join("")}</tbody>
+            </table></div>
+            <button type="button" class="btn ghost" data-csv>${gt.csv}</button>
+          </section>
+
+          <section id="report"><h2>${gt.report}</h2><ul>${L(g, "report").map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>
+
+          <section id="files"><h2>${gt.files}</h2>
+            ${g.files.map((f) => `<div class="file-row">
+              <div><b dir="ltr">${esc(f.file)}</b><div class="muted">${tr(f, "d")}</div></div>
+              <div class="file-actions"><a class="btn" href="${g.dir}/${f.file}" download>${gt.download}</a><button type="button" class="btn ghost" data-src="${g.dir}/${f.file}">${gt.show}</button></div>
+              <pre class="src" hidden dir="ltr"><code></code></pre></div>`).join("")}
+          </section>
+        </div>
+      </div>`;
+  };
+
+  /* simulators: small canvas plots, colors from CSS variables */
+  function drawSims() {
+    const css = getComputedStyle(document.documentElement);
+    const col = (v, d) => css.getPropertyValue(v).trim() || d;
+    const fit = (cv) => { const r = window.devicePixelRatio || 1, w = cv.clientWidth, h = +(cv.dataset.h ||= cv.getAttribute("height")); cv.style.height = h + "px"; cv.width = w * r; cv.height = h * r; const x = cv.getContext("2d"); x.scale(r, r); return [x, w, h]; };
+    const axes = (x, w, h, y0) => { x.strokeStyle = col("--line", "#ddd"); x.lineWidth = 1; x.beginPath(); x.moveTo(0, y0); x.lineTo(w, y0); x.stroke(); };
+    app.querySelectorAll('[data-sim="am"]').forEach((el) => {
+      const mode = el.querySelector('[data-k="mode"]').value, ka = +el.querySelector('[data-k="ka"]').value / 100;
+      el.querySelector('[data-o="ka"]').textContent = Math.round(ka * 100) + "%";
+      let [x, w, h] = fit(el.querySelector('[data-c="t"]'));
+      const y0 = h / 2, sc = h / 2 / 2.7, N = 900;
+      axes(x, w, h, y0);
+      const env = (t) => (mode === "am" ? 1 + ka * Math.cos(2 * Math.PI * 2 * t) : 1.5 * ka * Math.cos(2 * Math.PI * 2 * t));
+      x.strokeStyle = col("--accent", "#1f5fa8"); x.lineWidth = 1; x.beginPath();
+      for (let i = 0; i <= N; i++) { const t = i / N; const v = env(t) * Math.cos(2 * Math.PI * 30 * t); x[i ? "lineTo" : "moveTo"](t * w, y0 - v * sc); }
+      x.stroke();
+      x.strokeStyle = "#e8892b"; x.lineWidth = 2;
+      for (const s of [1, -1]) { x.beginPath(); for (let i = 0; i <= N; i++) { const t = i / N; x[i ? "lineTo" : "moveTo"](t * w, y0 - s * (mode === "am" ? env(t) : Math.abs(env(t))) * sc); } x.stroke(); }
+      if (mode === "am" && ka > 1) { x.fillStyle = "#c0392b"; x.font = "13px sans-serif"; x.fillText(EN ? "over-modulation: envelope ≠ message" : "אפנון יתר: המעטפת ≠ המידע", 10, 18); }
+      [x, w, h] = fit(el.querySelector('[data-c="f"]'));
+      const lines = mode === "am" ? [[-1, ka / 2], [0, 1], [1, ka / 2]] : [[-1, 0.75 * ka], [1, 0.75 * ka]];
+      axes(x, w, h, h - 22);
+      x.font = "12px sans-serif"; x.textAlign = "center"; x.fillStyle = col("--muted", "#666");
+      [[-1, "fc−fm"], [0, "fc"], [1, "fc+fm"]].forEach(([k, s]) => x.fillText(s, w / 2 + k * w / 4, h - 6));
+      lines.forEach(([k, a]) => { x.fillStyle = k ? "#2e9e5b" : col("--accent", "#1f5fa8"); x.fillRect(w / 2 + k * w / 4 - 3, h - 22 - a * (h - 40), 6, a * (h - 40)); });
+      const Pc = mode === "am" ? 0.5 : 0, Ps = mode === "am" ? ka * ka / 4 : 2 * (0.75 * ka) ** 2 / 2;
+      const gt = G();
+      el.querySelector('[data-o="read"]').innerHTML = mode === "am"
+        ? `<div>V<sub>max</sub> = ${(1 + ka).toFixed(2)}</div><div>V<sub>min</sub> = ${(1 - ka).toFixed(2)}</div><div>${gt.carrier}: 1.00</div><div>${gt.sidebands}: 2 × ${(ka / 2).toFixed(2)}</div><div><b>${gt.eff}: ${(100 * Ps / (Pc + Ps || 1)).toFixed(1)}%</b></div>`
+        : `<div>${gt.carrier}: 0</div><div>${gt.sidebands}: 2 × ${(0.75 * ka).toFixed(2)}</div><div><b>${gt.eff}: ${ka ? 100 : 0}%</b></div>`;
+    });
+    app.querySelectorAll('[data-sim="rx"]').forEach((el) => {
+      const ph = +el.querySelector('[data-k="ph"]').value, df = +el.querySelector('[data-k="df"]').value;
+      el.querySelector('[data-o="ph"]').textContent = ph + "°"; el.querySelector('[data-o="df"]').textContent = df + " Hz";
+      const [x, w, h] = fit(el.querySelector('[data-c="t"]'));
+      const y0 = h / 2, sc = h / 2 / 0.65, N = 1200, a = (t) => 0.5 * Math.cos((ph * Math.PI) / 180 + 2 * Math.PI * df * t);
+      axes(x, w, h, y0);
+      x.strokeStyle = col("--accent", "#1f5fa8"); x.lineWidth = 1.4; x.beginPath();
+      for (let i = 0; i <= N; i++) { const t = i / N; x[i ? "lineTo" : "moveTo"](t * w, y0 - a(t) * Math.cos(2 * Math.PI * 8 * t) * sc); }
+      x.stroke(); x.strokeStyle = "#e8892b"; x.lineWidth = 2;
+      for (const s of [1, -1]) { x.beginPath(); for (let i = 0; i <= N; i++) { const t = i / N; x[i ? "lineTo" : "moveTo"](t * w, y0 - s * a(t) * sc); } x.stroke(); }
+      x.fillStyle = col("--muted", "#666"); x.font = "12px sans-serif"; x.fillText("0", 4, h - 6); x.textAlign = "right"; x.fillText("1 s", w - 4, h - 6);
+    });
+  }
+
+  function wireGuide() {
+    const root = app.querySelector("[data-guide]");
+    if (!root) return;
+    const key = "guide:" + root.dataset.guide, total = +root.dataset.total;
+    const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+    const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } };
+    let done = load(key, []);
+    const boxes = app.querySelectorAll("[data-step]");
+    const sync = () => {
+      boxes.forEach((b) => { b.checked = done.includes(+b.dataset.step); b.closest(".step").classList.toggle("is-done", b.checked); });
+      app.querySelector('[data-o="prog"]').textContent = G().progress(done.length, total);
+      app.querySelector('[data-o="bar"]').style.width = (100 * done.length / total) + "%";
+    };
+    boxes.forEach((b) => b.addEventListener("change", () => { const s = +b.dataset.step; done = b.checked ? [...new Set([...done, s])] : done.filter((x) => x !== s); store(key, done); sync(); }));
+    app.querySelector("[data-reset]").addEventListener("click", () => { done = []; store(key, done); sync(); });
+    sync();
+    app.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => app.querySelector("#" + b.dataset.goto)?.scrollIntoView({ behavior: "smooth", block: "start" })));
+    // results table
+    const tkey = key + ":table", tv = load(tkey, {});
+    const calc = () => {
+      app.querySelectorAll(".results tbody tr").forEach((tr_) => {
+        const v = {}; tr_.querySelectorAll("input").forEach((i) => { v[i.dataset.v] = parseFloat(i.value); });
+        const ok = ["l", "c", "r"].every((k) => v[k] >= 0);
+        const tot = v.l + v.c + v.r, P_ = v.l ** 2 + v.c ** 2 + v.r ** 2;
+        tr_.querySelector('[data-o="tot"]').textContent = ok ? tot.toFixed(3) : "–";
+        tr_.querySelector('[data-o="iv"]').textContent = ok && tot ? (100 * (v.l + v.r) / tot).toFixed(1) + "%" : "–";
+        tr_.querySelector('[data-o="ip"]').textContent = ok && P_ ? (100 * (v.l ** 2 + v.r ** 2) / P_).toFixed(1) + "%" : "–";
+      });
+    };
+    app.querySelectorAll(".results input").forEach((i) => {
+      const id = i.closest("tr").dataset.d + i.dataset.v;
+      if (tv[id] != null) i.value = tv[id];
+      i.addEventListener("input", () => { tv[id] = i.value; store(tkey, tv); calc(); });
+    });
+    calc();
+    app.querySelector("[data-csv]").addEventListener("click", () => {
+      const rows = [...app.querySelectorAll(".results tr")].map((r) => [...r.children].map((c) => (c.querySelector("input")?.value ?? c.textContent).replace(/\\\(|\\\)|\\eta/g, "").trim()).join(","));
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob(["﻿" + rows.join("\n")], { type: "text/csv" }));
+      a.download = root.dataset.guide + "_results.csv"; a.click();
+    });
+    // code viewers
+    app.querySelectorAll("[data-src]").forEach((b) => b.addEventListener("click", async () => {
+      const pre = b.closest(".file-row").querySelector("pre");
+      if (!pre.hidden) { pre.hidden = true; b.textContent = G().show; return; }
+      if (!pre.dataset.loaded) { try { pre.firstChild.textContent = await (await fetch(b.dataset.src)).text(); pre.dataset.loaded = "1"; } catch { pre.firstChild.textContent = "Could not load"; } }
+      pre.hidden = false; b.textContent = G().hide;
+    }));
+    // simulators
+    app.querySelectorAll(".sim input, .sim select").forEach((i) => i.addEventListener("input", drawSims));
+    drawSims();
+    if (!wireGuide.resize) { wireGuide.resize = true; window.addEventListener("resize", () => app.querySelector(".sim") && drawSims()); }
+  }
+
+  function renderMath() {
+    if (window.renderMathInElement) {
+      window.renderMathInElement(app, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }], throwOnError: false });
+    } else if (app.querySelector(".guide")) setTimeout(renderMath, 200);
+  }
 
   pages.rf = () => {
     const t = T();
@@ -611,7 +856,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
   }
 
   /* ---------- router ---------- */
-  const navKey = { "": "home", courses: "courses", course: "courses", topics: "topics", topic: "topics", exam: "exam", lab: "lab", sdr: "lab", rf: "lab", research: "research", projects: "projects", about: "about" };
+  const navKey = { "": "home", courses: "courses", course: "courses", topics: "topics", topic: "topics", exam: "exam", lab: "lab", sdr: "lab", guide: "lab", rf: "lab", research: "research", projects: "projects", about: "about" };
 
   function render() {
     let raw = location.hash.replace(/^#\/?/, "");
@@ -630,6 +875,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       case "exam": html = pages.exam(p1); break;
       case "lab": html = pages.lab(); break;
       case "sdr": html = pages.sdr(p1); break;
+      case "guide": html = pages.guide(p1); break;
       case "rf": html = pages.rf(); break;
       case "research": html = pages.research(); break;
       case "projects": html = pages.projects(); break;
@@ -642,6 +888,8 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     document.querySelector("nav.main").classList.remove("open");
     wireVideo();
     wirePage();
+    wireGuide();
+    renderMath();
     if (!p2 && !(p0 === "exam" && p1)) window.scrollTo(0, 0);
     else if (window.innerWidth <= 960) document.getElementById("video")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }

@@ -61,3 +61,9 @@ python3 -m http.server 8765 --directory website
 האתר מוסיף לבד כל סרטון חדש שעלה לפלייליסט של קורס, ומציג בדף הבית את הסרטונים האחרונים בערוץ.
 GitHub Action (`.github/workflows/youtube-sync.yml`) מריץ את זה כל 3 שעות. אפשר גם להריץ ידנית מלשונית Actions ← Sync with YouTube ← Run workflow.
 כותרות, יחידות ונושאים שכתובים ב-data.js תמיד קודמים למה שמגיע מ-YouTube.
+
+## מדריכי מעבדה אינטרנטיים
+
+`guides.js` מחזיק את המדריכים (רקע, שאלות הכנה, חלקים ושלבים, טבלת תוצאות, קבצי MATLAB), בעברית ובאנגלית.
+הקבצים של כל מעבדה בתיקייה `labs/<lab>/`: איורים (`make_figures.py`), סכמות חיבור (`make_diagrams.py`) וסקריפטי MATLAB.
+נוסחאות נכתבות ב-LaTeX בין `\( \)` או `$$ $$` ומוצגות עם KaTeX. הדף נמצא ב-`#/guide/<id>`.
