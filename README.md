@@ -54,3 +54,10 @@ python3 -m http.server 8765 --directory website
 **Netlify או Cloudflare Pages:** גוררים את התיקייה לממשק שלהם.
 
 **דומיין משלך:** אפשר לחבר דומיין לכל אחד מהשירותים האלה, בעלות של כ-10–15 דולר לשנה.
+
+## סנכרון אוטומטי עם YouTube
+
+`tools/sync_youtube.py` קורא את הפלייליסטים של הקורסים מ-data.js, מושך אותם מ-YouTube (בעזרת yt-dlp, בלי מפתח API) וכותב את `youtube.js`.
+האתר מוסיף לבד כל סרטון חדש שעלה לפלייליסט של קורס, ומציג בדף הבית את הסרטונים האחרונים בערוץ.
+GitHub Action (`.github/workflows/youtube-sync.yml`) מריץ את זה כל 3 שעות. אפשר גם להריץ ידנית מלשונית Actions ← Sync with YouTube ← Run workflow.
+כותרות, יחידות ונושאים שכתובים ב-data.js תמיד קודמים למה שמגיע מ-YouTube.

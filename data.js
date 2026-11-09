@@ -12,6 +12,8 @@
  */
 
 window.SITE = {
+  name: "קורסים פתוחים · תקשורת ו-RF",       // שם האתר בסרגל העליון
+  name_en: "Open Courses · Communication & RF",
   owner: "ד״ר אייל מגורי",
   owner_en: "Dr. Eyal Magory",
   tagline: "שיעורים מלאים, תרגולים ומעבדות בהנדסת חשמל ותקשורת – בחינם",
@@ -199,8 +201,8 @@ window.COURSES = [
     playlist: "PLd61vYISMuMc",
     units: [
       { title: "הרצאות", title_en: "Lectures", lessons: [
-        { id: "CAMb3RnO-sE", title: "Electronic and Optical Communication 1", en: "Electronic and Optical Communication 1", dur: "1:26:58", tags: ["optical"] },
-        { id: "pyRX9WstwbM", title: "Optical Communication Practice 2", en: "Optical Communication Practice 2", dur: "1:16:44", tags: ["optical", "fourier"], kind: "practice" },
+        { id: "CAMb3RnO-sE", title: "Electronic and Optical Communication 1-2", en: "Electronic and Optical Communication 1-2", dur: "1:26:58", tags: ["optical"] },
+        { id: "pyRX9WstwbM", title: "Electronic and Optical Communication 3", en: "Electronic and Optical Communication 3", dur: "1:16:44", tags: ["optical", "fourier"], kind: "practice" },
       ]},
     ],
   },
@@ -213,8 +215,15 @@ window.SPECIALS = [
   { id: "PIP7Lk2rBdU", title: "Car Key Signal Sniffer – SDR", en: "Car key signal sniffer with SDR", dur: "7:58", tags: ["sdr"] },
 ];
 
-/* תחומי מחקר – טיוטה, לעדכן */
+/* תחומי מחקר */
 window.RESEARCH = [
+  {
+    title: "לייזר אלקטרונים חופשיים (FEL) ומקורות קרינה יחסותיים",
+    title_en: "Free-electron lasers (FEL) and relativistic radiation sources",
+    text: "יצירת קרינה בתחום ה-THz והגלים המילימטריים מאלומות אלקטרונים יחסותיות: אנדולטורים ושדות מגנטיים, קרינה על-קורנת (superradiance) ומדידת הקרינה – במסגרת פרויקט ה-THz FEL באוניברסיטת אריאל.",
+    text_en: "Generating THz and millimeter-wave radiation from relativistic electron beams: undulators and magnetic fields, superradiant emission and radiation measurement – as part of the THz FEL project at Ariel University.",
+    tags: ["radar"],
+  },
   {
     title: "ניטור סימנים חיוניים ללא מגע במכ״ם mmWave",
     title_en: "Contactless vital-sign monitoring with mmWave radar",

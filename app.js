@@ -43,7 +43,7 @@
       examTitle: "הכנה למבחנים", examLead: "שיעורי חזרה, תרגולים ופתרונות תרגילי בית מכל הקורסים, במקום אחד.",
       kinds: { all: "הכול", review: "חזרות", practice: "תרגולים", solution: "פתרונות" },
       kindBadge: { practice: "תרגול", solution: "פתרון", review: "חזרה" },
-      researchTitle: "מחקר", researchLead: "תחומי המחקר במעבדה: חישה במכ״ם mmWave, הדמיה ועיבוד אותות.",
+      researchTitle: "מחקר", researchLead: "לייזר אלקטרונים חופשיים ומקורות קרינה יחסותיים, חישה והדמיה במכ״ם mmWave ועיבוד אותות.",
       talks: "הרצאות והדגמות",
       industry: "שיתוף פעולה עם התעשייה", industryText: "חברות שמעוניינות לשתף פעולה במחקר, להעמיד ציוד או להציע פרויקט לסטודנטים – מוזמנות ליצור קשר.",
       contact: "יצירת קשר", collabSubject: "שיתוף פעולה במחקר",
@@ -55,10 +55,11 @@
       propose: "שליחת הצעה", projSubject: "פרויקט סטודנטים",
       aboutTitle: "אודות",
       about: [
-        "ד״ר אייל מגורי הוא מרצה במרכז האקדמי לב (JCT) – מכון לב, בירושלים. הוא מלמד קורסים בתקשורת, באותות ומערכות, באנטנות ובתורת האינפורמציה, ומוביל מחקר בחישה במכ״ם mmWave.",
+        "ד״ר אייל מגורי הוא מרצה במרכז האקדמי לב (JCT) – מכון לב, בירושלים. הוא מלמד קורסים בתקשורת, באותות ומערכות, באנטנות, בתורת האינפורמציה ובתקשורת אופטית. המחקר שלו עוסק בלייזר אלקטרונים חופשיים (FEL) ובמקורות קרינה של אלומות אלקטרונים יחסותיות, ובחישה במכ״ם mmWave.",
         "המטרה שלו היא לפתח במכון לב מעבדה לתקשורת, RF ומכ״ם – מקום שבו סטודנטים עובדים על ציוד אמיתי, ושבו נפגשים הוראה, פרויקטים ומחקר עם התעשייה.",
         "האתר מרכז את כל השיעורים, התרגולים והמעבדות שהוקלטו – בחינם, בסדר הלימוד ולפי נושא – כדי שכל סטודנט יוכל ללמוד בקצב שלו.",
       ],
+      interests: "תחומי מחקר", interestList: ["לייזר אלקטרונים חופשיים (FEL) בתחום ה-THz", "מקורות קרינה של אלומות אלקטרונים יחסותיות", "שדות מגנטיים ואנדולטורים", "חישה והדמיה במכ״ם mmWave", "עיבוד אותות, SDR ואנטנות"],
       ytChannel: "ערוץ YouTube", notFound: "הדף לא נמצא", backHome: "חזרה לדף הבית",
       free: "כל השיעורים זמינים בחינם", langNoteEn: "השיעורים בקורס הזה באנגלית", langNoteHe: "",
       more: "←", playLabel: "הפעלת הסרטון",
@@ -92,7 +93,7 @@
       examTitle: "Exam preparation", examLead: "Review sessions, tutorials and homework solutions from all courses, in one place.",
       kinds: { all: "All", review: "Reviews", practice: "Tutorials", solution: "Solutions" },
       kindBadge: { practice: "Tutorial", solution: "Solution", review: "Review" },
-      researchTitle: "Research", researchLead: "Research in the lab: mmWave radar sensing, imaging and signal processing.",
+      researchTitle: "Research", researchLead: "Free-electron lasers and relativistic radiation sources, mmWave radar sensing and imaging, and signal processing.",
       talks: "Talks and demos",
       industry: "Industry collaboration", industryText: "Companies interested in joint research, lending equipment or proposing a student project are welcome to get in touch.",
       contact: "Contact", collabSubject: "Research collaboration",
@@ -104,10 +105,11 @@
       propose: "Send a proposal", projSubject: "Student project",
       aboutTitle: "About",
       about: [
-        "Dr. Eyal Magory is a lecturer at the Jerusalem College of Technology (JCT) – Lev Academic Center. He teaches communication systems, signals and systems, antennas and information theory, and leads research in mmWave radar sensing.",
+        "Dr. Eyal Magory is a lecturer at the Jerusalem College of Technology (JCT) – Lev Academic Center. He teaches communication systems, signals and systems, antennas, information theory and optical communication. His research covers free-electron lasers (FEL) and radiation sources driven by relativistic electron beams, and mmWave radar sensing.",
         "His goal is to build a communication, RF and radar lab at JCT – a place where students work on real hardware, and where teaching, projects and research meet industry.",
         "This site collects all recorded lectures, tutorials and labs – free, in teaching order and by topic – so every student can learn at their own pace. Most lectures are taught in Hebrew.",
       ],
+      interests: "Research interests", interestList: ["THz free-electron lasers (FEL)", "Radiation sources driven by relativistic electron beams", "Magnetic fields and undulators", "mmWave radar sensing and imaging", "Signal processing, SDR and antennas"],
       ytChannel: "YouTube channel", notFound: "Page not found", backHome: "Back to home",
       free: "All lectures are free", langNoteEn: "", langNoteHe: "Lectures are in Hebrew",
       more: "→", playLabel: "Play video",
@@ -115,6 +117,26 @@
     },
   };
   const T = () => (EN ? UI.en : UI.he);
+
+  /* ---------- automatic sync with YouTube (youtube.js, written by tools/sync_youtube.py) ---------- */
+  const YT = window.YT_SYNC || { playlists: {}, latest: [] };
+  const NEW_UNIT = { title: "חדש ב-YouTube", title_en: "New on YouTube" };
+  {
+    const known = new Set();
+    for (const c of COURSES) for (const u of c.units) for (const l of u.lessons) known.add(l.id);
+    for (const s of SPECIALS) known.add(s.id);
+    for (const c of COURSES) {
+      const fresh = (YT.playlists[c.playlist] || []).filter((v) => !known.has(v.id));
+      if (!fresh.length) continue;
+      const counts = {};                                   // the course's most common topic
+      for (const u of c.units) for (const l of u.lessons) for (const t of l.tags || []) counts[t] = (counts[t] || 0) + 1;
+      const tag = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+      const lessons = fresh.map((v) => ({ id: v.id, title: v.title, en: v.title, dur: v.dur || "0:00", tags: tag ? [tag] : [], auto: true }));
+      if (c.units.length === 1) c.units[0].lessons.push(...lessons);
+      else c.units.push({ ...NEW_UNIT, lessons });
+      for (const v of fresh) known.add(v.id);
+    }
+  }
 
   /* ---------- derived indexes ---------- */
   const allLessons = [];
@@ -205,69 +227,69 @@
   /* ---------- pages ---------- */
   const pages = {};
 
-  /* home: academic profile page */
+  /* home: the course site; the lecturer is one section of it */
   const HOME = {
     he: {
-      position: "מרצה, המחלקה להנדסת חשמל ואלקטרוניקה",
-      bio: [
-        "ד״ר אייל מגורי מלמד במרכז האקדמי לב (JCT) בירושלים קורסים בתקשורת, באותות ומערכות, באנטנות ובתורת האינפורמציה. המחקר שלו עוסק בחישה במכ״ם mmWave, בהדמיה ובעיבוד אותות.",
-        "הוא מקים במכון לב מעבדה לתקשורת, RF ומכ״ם, שבה סטודנטים עובדים על ציוד אמיתי – ומשתף את כל ההרצאות והמעבדות באתר הזה, בחינם.",
-      ],
-      interests: "תחומי עניין", interestList: ["חישה במכ״ם mmWave וניטור סימנים חיוניים", "הדמיית מכ״ם בשדה קרוב (SAR)", "עיבוד אותות ומערכות תקשורת", "רדיו מוגדר תוכנה (SDR)", "אנטנות ו-RF"],
-      email: "דוא״ל", teaching: "הוראה", teachingLead: "הרצאות מוקלטות מלאות, בסדר הלימוד.",
-      thCode: "מס׳ קורס", thCourse: "קורס", thYear: "שנה", thLect: "הרצאות",
-      upcoming: "בהכנה", research: "מחקר", allResearch: "כל תחומי המחקר והצעות לשיתוף פעולה",
+      title: "קורסים פתוחים בהנדסת חשמל ותקשורת",
+      lead: "הרצאות מלאות, תרגולים ומעבדות בתקשורת, באותות ומערכות, באנטנות, בתורת האינפורמציה ובתקשורת אופטית – בחינם, בסדר הלימוד ולפי נושא.",
+      dept: "המחלקה להנדסת חשמל ואלקטרוניקה · המרכז האקדמי לב (JCT), ירושלים",
+      latest: "הועלו לאחרונה", latestNote: "מתעדכן אוטומטית מערוץ ה-YouTube", allVideos: "לערוץ",
+      teaching: "קורסים", thCode: "מס׳ קורס", thCourse: "קורס", thYear: "שנה", thLect: "הרצאות", upcoming: "בהכנה",
+      research: "מחקר", allResearch: "תחומי המחקר והצעות לשיתוף פעולה",
       lab: "המעבדה", labText: "שבעה ניסויים ב-ADALM-Pluto שבונים רדיו שלם – מטון ראשון ועד OFDM ומכ״ם. לכל ניסוי רקע תאורטי, קוד Python ומשימות מחקר.",
       toLab: "לניסויים", students: "לסטודנטים",
       links: [["exam", "הכנה למבחנים", "חזרות, תרגולים ופתרונות"], ["topics", "חיפוש לפי נושא", "כל השיעורים מקובצים לפי נושא"], ["projects", "פרויקטי גמר", "פרויקטים פתוחים במכ״ם, SDR ואנטנות"]],
-      summary: (c, l, h) => `${c} קורסים · ${l} הרצאות · ${h}+ שעות לימוד`,
+      lecturer: "המרצה", position: "מרצה, המחלקה להנדסת חשמל ואלקטרוניקה",
+      lecturerText: "מלמד תקשורת, אותות ומערכות, אנטנות, תורת האינפורמציה ותקשורת אופטית. חוקר לייזר אלקטרונים חופשיים (FEL) ומקורות קרינה של אלומות יחסותיות, וחישה והדמיה במכ״ם mmWave.",
+      more: "עוד על המרצה", email: "דוא״ל",
+      stats: (c, l, h) => `${c} קורסים · ${l} הרצאות · ${h}+ שעות לימוד`, updated: (d) => `עודכן מ-YouTube ב-${d}`,
     },
     en: {
-      position: "Lecturer, Department of Electrical and Electronics Engineering",
-      bio: [
-        "Dr. Eyal Magory teaches communication systems, signals and systems, antennas and information theory at the Jerusalem College of Technology (JCT). His research focuses on mmWave radar sensing, imaging and signal processing.",
-        "He is building a communication, RF and radar lab at JCT, where students work on real hardware – and shares all lectures and labs on this site, free of charge.",
-      ],
-      interests: "Research interests", interestList: ["mmWave radar sensing and vital-sign monitoring", "Near-field radar imaging (SAR)", "Signal processing and communication systems", "Software-defined radio (SDR)", "Antennas and RF"],
-      email: "Email", teaching: "Teaching", teachingLead: "Full recorded lectures, in teaching order.",
-      thCode: "Code", thCourse: "Course", thYear: "Year", thLect: "Lectures",
-      upcoming: "In preparation", research: "Research", allResearch: "All research areas and collaboration topics",
+      title: "Open Courses in Electrical and Communication Engineering",
+      lead: "Full lectures, tutorials and labs in communication systems, signals and systems, antennas, information theory and optical communication – free, in teaching order and by topic.",
+      dept: "Department of Electrical and Electronics Engineering · Jerusalem College of Technology (JCT)",
+      latest: "Latest uploads", latestNote: "Updated automatically from the YouTube channel", allVideos: "Channel",
+      teaching: "Courses", thCode: "Code", thCourse: "Course", thYear: "Year", thLect: "Lectures", upcoming: "In preparation",
+      research: "Research", allResearch: "Research areas and collaboration topics",
       lab: "The lab", labText: "Seven ADALM-Pluto experiments that build a complete radio – from a first tone to OFDM and radar. Each comes with theory, Python code and research tasks.",
       toLab: "View experiments", students: "For students",
       links: [["exam", "Exam preparation", "Reviews, tutorials and solutions"], ["topics", "Browse by topic", "All lectures grouped by topic"], ["projects", "Final-year projects", "Open projects in radar, SDR and antennas"]],
-      summary: (c, l, h) => `${c} courses · ${l} lectures · ${h}+ hours of teaching`,
+      lecturer: "Lecturer", position: "Lecturer, Department of Electrical and Electronics Engineering",
+      lecturerText: "Teaches communication systems, signals and systems, antennas, information theory and optical communication. Researches free-electron lasers (FEL) and radiation sources driven by relativistic electron beams, and mmWave radar sensing and imaging.",
+      more: "About the lecturer", email: "Email",
+      stats: (c, l, h) => `${c} courses · ${l} lectures · ${h}+ hours`, updated: (d) => `Synced with YouTube on ${d}`,
     },
+  };
+
+  const latestCard = (v) => {
+    const l = allLessons.find((x) => x.id === v.id);
+    const href = l?.course ? `${P()}/course/${l.course.id}/${encodeURIComponent(v.id)}` : ytWatch(v.id);
+    return thumbCard(l || { ...v, course: null }, href, !l?.course);
   };
 
   pages.home = () => {
     const t = T(), h = EN ? HOME.en : HOME.he;
-    const photo = SITE.photo ? `<img class="portrait" src="${esc(SITE.photo)}" alt="${esc(tr(SITE, "owner"))}">` : "";
+    const upd = YT.updated ? new Date(YT.updated).toLocaleDateString(EN ? "en-GB" : "he-IL") : "";
+    const latest = (YT.latest || []).slice(0, 4);
     return `
-      <section class="profile"><div class="wrap profile-grid">
-        <div>
-          <div class="profile-head">
-            ${photo}
-            <div>
-              <h1>${esc(tr(SITE, "owner"))}</h1>
-              <div class="position">${h.position}</div>
-              <div class="affil">${instBadge()}${esc(tr(LAB, "inst"))}</div>
-            </div>
-          </div>
-          ${h.bio.map((p) => `<p>${esc(p)}</p>`).join("")}
-          <ul class="contact">
-            <li><span>${h.email}</span> <a href="mailto:${esc(SITE.email)}" dir="ltr">${esc(SITE.email)}</a></li>
-            <li><span>YouTube</span> <a href="${esc(SITE.youtube)}" target="_blank" rel="noopener" dir="ltr">@JCT_1</a></li>
-            <li><span>GitHub</span> <a href="https://github.com/magory1" target="_blank" rel="noopener" dir="ltr">magory1</a></li>
-          </ul>
-        </div>
-        <aside class="interests">
-          <h2>${h.interests}</h2>
-          <ul>${h.interestList.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-        </aside>
+      <section class="site-hero"><div class="wrap">
+        <div class="affil">${instBadge()}<span>${h.dept}</span></div>
+        <h1>${h.title}</h1>
+        <p class="lead">${h.lead}</p>
+        <form class="search search-inline" role="search" id="search-form">
+          <input type="search" id="q" placeholder="${esc(t.searchPh)}" aria-label="${t.search}">
+          <button type="submit">${t.search}</button>
+        </form>
+        <p class="muted stats">${h.stats(COURSES.length, allLessons.length, hours(allLessons))}${upd ? ` · ${h.updated(upd)}` : ""}</p>
       </div></section>
 
+      ${latest.length ? `<section class="acad"><div class="wrap">
+        <div class="acad-head"><h2>${h.latest}</h2><span class="muted">${h.latestNote} · <a href="${esc(SITE.youtube)}" target="_blank" rel="noopener">${h.allVideos} ↗</a></span></div>
+        <div class="grid latest-grid">${latest.map(latestCard).join("")}</div>
+      </div></section>` : ""}
+
       <section class="acad"><div class="wrap">
-        <div class="acad-head"><h2>${h.teaching}</h2><span class="muted">${h.summary(COURSES.length, allLessons.length, hours(allLessons))}</span></div>
+        <div class="acad-head"><h2>${h.teaching}</h2><a href="${P()}/courses">${t.allCourses} ${t.more}</a></div>
         <table class="courses-table">
           <thead><tr><th>${h.thCode}</th><th>${h.thCourse}</th><th>${h.thYear}</th><th>${h.thLect}</th></tr></thead>
           <tbody>
@@ -275,15 +297,11 @@
             <tr><td>—</td><td><a href="${P()}/rf">${esc(tr(RF_COURSE, "title"))}</a></td><td colspan="2" class="muted">${h.upcoming}</td></tr>
           </tbody>
         </table>
-        <form class="search search-inline" role="search" id="search-form">
-          <input type="search" id="q" placeholder="${esc(t.searchPh)}" aria-label="${t.search}">
-          <button type="submit">${t.search}</button>
-        </form>
       </div></section>
 
       <section class="acad"><div class="wrap">
-        <div class="acad-head"><h2>${h.research}</h2><a href="${P()}/research">${h.allResearch} ${t.more}</a></div>
-        <ol class="research-list">${RESEARCH.map((r) => `<li><b>${esc(tr(r, "title"))}</b><span class="muted">${esc(tr(r, "text"))}</span></li>`).join("")}</ol>
+        <div class="acad-head"><h2>${h.students}</h2></div>
+        <div class="student-links">${h.links.map(([r, a, b]) => `<a href="${P()}/${r}"><b>${a}</b><span>${b}</span></a>`).join("")}</div>
       </div></section>
 
       <section class="acad"><div class="wrap">
@@ -293,8 +311,20 @@
       </div></section>
 
       <section class="acad"><div class="wrap">
-        <div class="acad-head"><h2>${h.students}</h2></div>
-        <div class="student-links">${h.links.map(([r, a, b]) => `<a href="${P()}/${r}"><b>${a}</b><span>${b}</span></a>`).join("")}</div>
+        <div class="acad-head"><h2>${h.research}</h2><a href="${P()}/research">${h.allResearch} ${t.more}</a></div>
+        <ol class="research-list">${RESEARCH.map((r) => `<li><b>${esc(tr(r, "title"))}</b><span class="muted">${esc(tr(r, "text"))}</span></li>`).join("")}</ol>
+      </div></section>
+
+      <section class="acad"><div class="wrap">
+        <div class="acad-head"><h2>${h.lecturer}</h2></div>
+        <div class="lecturer">
+          ${SITE.photo ? `<img class="portrait sm" src="${esc(SITE.photo)}" alt="${esc(tr(SITE, "owner"))}">` : ""}
+          <div>
+            <b>${esc(tr(SITE, "owner"))}</b> <span class="muted">· ${h.position}</span>
+            <p>${h.lecturerText}</p>
+            <a href="${P()}/about">${h.more} ${t.more}</a> · <a href="mailto:${esc(SITE.email)}" dir="ltr">${esc(SITE.email)}</a>
+          </div>
+        </div>
       </div></section>`;
   };
 
@@ -526,7 +556,13 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
   pages.about = () => `
     <div class="wrap page-head"><h1>${T().aboutTitle}</h1></div>
     <section class="block" style="padding-top:10px"><div class="wrap" style="max-width:760px">
+      <div class="lecturer" style="margin-bottom:18px">
+        ${SITE.photo ? `<img class="portrait sm" src="${esc(SITE.photo)}" alt="${esc(tr(SITE, "owner"))}">` : ""}
+        <div><b>${esc(tr(SITE, "owner"))}</b><br><span class="muted">${(EN ? HOME.en : HOME.he).position}<br>${esc(tr(LAB, "inst"))}</span></div>
+      </div>
       ${T().about.map((p) => `<p>${esc(p)}</p>`).join("")}
+      <h2 style="font-size:20px;margin-top:26px">${T().interests}</h2>
+      <ul>${T().interestList.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
       <p><a class="btn" href="mailto:${esc(SITE.email)}">${T().contact}</a> <a class="btn ghost" href="${esc(SITE.youtube)}" target="_blank" rel="noopener">${T().ytChannel}</a></p>
     </div></section>`;
 
@@ -553,7 +589,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     const t = T();
     document.documentElement.lang = EN ? "en" : "he";
     document.documentElement.dir = EN ? "ltr" : "rtl";
-    document.title = EN ? "Dr. Eyal Magory – JCT | Courses, Lab & Research" : "ד״ר אייל מגורי – מכון לב | קורסים, מעבדה ומחקר";
+    document.title = EN ? "Open Courses in Communication & RF – JCT" : "קורסים פתוחים בתקשורת ו-RF – מכון לב";
     const routes = { home: "/", courses: "/courses", topics: "/topics", exam: "/exam", lab: "/lab", research: "/research", projects: "/projects", about: "/about" };
     document.querySelectorAll("nav.main a").forEach((a) => {
       a.textContent = t.nav[a.dataset.nav];
@@ -561,7 +597,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     });
     const brand = document.querySelector(".brand");
     brand.href = P() + "/";
-    brand.lastChild.textContent = " " + tr(SITE, "owner");
+    brand.lastChild.textContent = " " + tr(SITE, "name");
     const lb = document.getElementById("lang-btn");
     lb.textContent = t.other;
     lb.lang = EN ? "he" : "en";
