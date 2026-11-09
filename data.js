@@ -12,8 +12,8 @@
  */
 
 window.SITE = {
-  name: "קורסים פתוחים · תקשורת ו-RF",       // שם האתר בסרגל העליון
-  name_en: "Open Courses · Communication & RF",
+  name: "על הגל",       // שם האתר בסרגל העליון
+  name_en: "On the Wave",
   owner: "ד״ר אייל מגורי",
   owner_en: "Dr. Eyal Magory",
   tagline: "שיעורים מלאים, תרגולים ומעבדות בהנדסת חשמל ותקשורת – בחינם",

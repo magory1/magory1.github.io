@@ -274,7 +274,8 @@
     return `
       <section class="site-hero"><div class="wrap">
         <div class="affil">${instBadge()}<span>${h.dept}</span></div>
-        <h1>${h.title}</h1>
+        <h1>${esc(tr(SITE, "name"))}</h1>
+        <p class="subtitle">${h.title}</p>
         <p class="lead">${h.lead}</p>
         <form class="search search-inline" role="search" id="search-form">
           <input type="search" id="q" placeholder="${esc(t.searchPh)}" aria-label="${t.search}">
@@ -589,7 +590,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     const t = T();
     document.documentElement.lang = EN ? "en" : "he";
     document.documentElement.dir = EN ? "ltr" : "rtl";
-    document.title = EN ? "Open Courses in Communication & RF – JCT" : "קורסים פתוחים בתקשורת ו-RF – מכון לב";
+    document.title = EN ? "On the Wave – Open Courses in Electrical and Communication Engineering | JCT" : "על הגל – קורסים פתוחים בהנדסת חשמל ותקשורת | JCT";
     const routes = { home: "/", courses: "/courses", topics: "/topics", exam: "/exam", lab: "/lab", research: "/research", projects: "/projects", about: "/about" };
     document.querySelectorAll("nav.main a").forEach((a) => {
       a.textContent = t.nav[a.dataset.nav];
@@ -603,7 +604,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     lb.lang = EN ? "he" : "en";
     lb.href = (EN ? "#/" : "#/en/") + rest;            // same page in the other language
     document.querySelector(".menu-btn").setAttribute("aria-label", t.menu);
-    document.getElementById("foot-owner").textContent = tr(SITE, "owner") + " · " + tr(LAB, "inst_short");
+    document.getElementById("foot-owner").textContent = tr(SITE, "name") + " · " + tr(SITE, "owner") + " · " + tr(LAB, "inst_short");
     document.getElementById("foot-free").textContent = t.free;
     document.getElementById("yt-link").textContent = t.ytChannel;
     document.getElementById("mail-link").textContent = t.contact;
