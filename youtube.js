@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-10T11:04Z",
+ "updated": "2026-11-10T19:40Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -306,17 +306,17 @@ window.YT_SYNC = {
   },
   {
    "id": "8h2ZchzSu1U",
-   "title": "Information Theory Lesson Two Canonical Extended Hoffman and lz77",
+   "title": "תורת האינפורמציה שיעור שני הופמן מורחב קנוני וlz77",
    "dur": "50:15"
   },
   {
    "id": "oZWPGdDM34M",
-   "title": "Lab 10: Connecting to an Oscilloscope and Practical Fourier Transform with an Oscilloscope",
+   "title": "lab 10 חיבור לסקופ והתמרת פוריה מעשית עם הסקופ",
    "dur": "29:16"
   },
   {
    "id": "G4ZznuSo6DM",
-   "title": "Lab 7 - Antennas Laboratory 130833",
+   "title": "Lab 7- Antennas Laboratory 130833",
    "dur": "42:26"
   },
   {
