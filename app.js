@@ -47,12 +47,18 @@
       talks: "הרצאות והדגמות",
       industry: "שיתוף פעולה עם התעשייה", industryText: "חברות שמעוניינות לשתף פעולה במחקר, להעמיד ציוד או להציע פרויקט לסטודנטים – מוזמנות ליצור קשר.",
       contact: "יצירת קשר", collabSubject: "שיתוף פעולה במחקר",
-      projTitle: "פרויקטי סטודנטים", projLead: "פרויקטים שבוצעו במעבדה, ופרויקטים פתוחים לסטודנטים שמחפשים פרויקט גמר.",
+      projTitle: "פרויקטים מובילים", projLead: "פרויקטים של סטודנטים ושל המעבדה: מה כבר נבנה, מה בעבודה עכשיו, ומה פתוח לסטודנטים שמחפשים פרויקט גמר.",
       status: { all: "הכול", open: "פתוחים לסטודנטים", active: "בעבודה", done: "הושלמו" },
       statusBadge: { done: "הושלם", active: "בעבודה", open: "פתוח לסטודנטים" },
       noProjects: "אין כרגע פרויקטים בקטגוריה הזאת.",
       proposeTitle: "רוצים להציע או להצטרף לפרויקט?", proposeText: "שלחו כמה שורות על הרעיון, הקורס שבמסגרתו אתם עובדים והציוד שאתם צריכים.",
       propose: "שליחת הצעה", projSubject: "פרויקט סטודנטים",
+      projLeadTag: "פרויקט מוביל", details: "לעמוד הפרויקט", allProjects: "כל הפרויקטים",
+      stages: { idea: "רעיון", research: "סקר ספרות", design: "תכנון", build: "בנייה", test: "ניסויים", results: "תוצאות", done: "הושלם" },
+      stageTitle: "שלב נוכחי", aboutProj: "על הפרויקט", resultsTitle: "תוצאות", timelineTitle: "ציר זמן", mediaTitle: "תמונות וסרטונים",
+      team: "צוות", noStudents: "עוד לא שובצו סטודנטים", labResearch: "מחקר המעבדה",
+      repo: "הקוד ב-GitHub", repoPrivate: "המאגר פרטי", remoteTag: "הפעלה מרחוק", remoteText: "לפרויקט הזה מתוכננת גישה מרחוק לציוד המעבדה, לסטודנטים של הפרויקט בלבד.",
+      fromStudents: "התוכן בעמוד מתעדכן על ידי צוות הפרויקט.", joinThis: "רוצים להצטרף לפרויקט הזה?", updated: "עודכן",
       aboutTitle: "אודות",
       about: [
         "ד״ר אייל מגורי הוא מרצה במרכז האקדמי לב (JCT) – מכון לב, בירושלים. הוא מלמד קורסים בתקשורת, באותות ומערכות, באנטנות, בתורת האינפורמציה ובתקשורת אופטית. המחקר שלו עוסק בלייזר אלקטרונים חופשיים (FEL) ובמקורות קרינה של אלומות אלקטרונים יחסותיות, ובחישה במכ״ם mmWave.",
@@ -97,12 +103,18 @@
       talks: "Talks and demos",
       industry: "Industry collaboration", industryText: "Companies interested in joint research, lending equipment or proposing a student project are welcome to get in touch.",
       contact: "Contact", collabSubject: "Research collaboration",
-      projTitle: "Student projects", projLead: "Projects completed in the lab, and open projects for students looking for a final-year project.",
+      projTitle: "Leading projects", projLead: "Student and lab projects: what has been built, what is in progress now, and what is open to students looking for a final-year project.",
       status: { all: "All", open: "Open to students", active: "In progress", done: "Completed" },
       statusBadge: { done: "Completed", active: "In progress", open: "Open to students" },
       noProjects: "No projects in this category right now.",
       proposeTitle: "Want to propose or join a project?", proposeText: "Send a few lines about the idea, the course you are working in and the equipment you need.",
       propose: "Send a proposal", projSubject: "Student project",
+      projLeadTag: "Lead project", details: "Project page", allProjects: "All projects",
+      stages: { idea: "Idea", research: "Literature review", design: "Design", build: "Build", test: "Experiments", results: "Results", done: "Completed" },
+      stageTitle: "Current stage", aboutProj: "About the project", resultsTitle: "Results", timelineTitle: "Timeline", mediaTitle: "Images and videos",
+      team: "Team", noStudents: "No students assigned yet", labResearch: "Lab research",
+      repo: "Code on GitHub", repoPrivate: "Private repository", remoteTag: "Remote operation", remoteText: "Remote access to the lab hardware is planned for this project, for the project's students only.",
+      fromStudents: "This page is updated by the project team.", joinThis: "Want to join this project?", updated: "Updated",
       aboutTitle: "About",
       about: [
         "Dr. Eyal Magory is a lecturer at the Jerusalem College of Technology (JCT) – Lev Academic Center. He teaches communication systems, signals and systems, antennas, information theory and optical communication. His research covers free-electron lasers (FEL) and radiation sources driven by relativistic electron beams, and mmWave radar sensing.",
@@ -436,22 +448,76 @@
       </div></section>`;
   };
 
+  /* ---------- projects ---------- */
+  const STAGES = ["idea", "research", "design", "build", "test", "results", "done"];
+  const REPO_RE = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
+  const YT_RE = /^[A-Za-z0-9_-]{11}$/;
+  const SHOWCASE = {};          // id -> merged data from the team's showcase.json (or false)
+
+  // Content the students edit lives in showcase.json in their own (public) repo.
+  // Everything is validated and escaped: only text, YouTube ids and images from that repo.
+  const cleanShowcase = (repo, j) => {
+    if (!j || typeof j !== "object") return null;
+    const str = (v, n = 600) => (typeof v === "string" ? v.slice(0, n) : undefined);
+    const strs = (v, n = 20) => (Array.isArray(v) ? v.map((x) => str(x)).filter(Boolean).slice(0, n) : undefined);
+    const out = {};
+    for (const k of ["text", "text_en"]) if (str(j[k])) out[k] = str(j[k]);
+    for (const k of ["about", "about_en", "results", "results_en", "students"]) if (strs(j[k])) out[k] = strs(j[k]);
+    if (STAGES.includes(j.stage)) out.stage = j.stage;
+    if (YT_RE.test(j.video || "")) out.video = j.video;
+    if (Array.isArray(j.timeline)) out.timeline = j.timeline.filter((e) => e && str(e.text)).slice(0, 30)
+      .map((e) => ({ date: str(e.date, 20) || "", text: str(e.text), text_en: str(e.text_en) }));
+    if (Array.isArray(j.media)) out.media = j.media.slice(0, 12).map((m) => {
+      if (m && YT_RE.test(m.youtube || "")) return { youtube: m.youtube, caption: str(m.caption, 200), caption_en: str(m.caption_en, 200) };
+      if (m && typeof m.image === "string" && /^[A-Za-z0-9._\/-]{1,200}$/.test(m.image) && !m.image.includes(".."))
+        return { image: `https://raw.githubusercontent.com/${repo}/HEAD/${m.image}`, caption: str(m.caption, 200), caption_en: str(m.caption_en, 200) };
+      return null;
+    }).filter(Boolean);
+    if (str(j.updated, 20)) out.updated = str(j.updated, 20);
+    return out;
+  };
+  const loadShowcase = (p) => {
+    if (!p.showcase || !REPO_RE.test(p.showcase) || p.id in SHOWCASE) return;
+    SHOWCASE[p.id] = false;
+    fetch(`https://raw.githubusercontent.com/${p.showcase}/HEAD/showcase.json`, { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { const c = cleanShowcase(p.showcase, j); if (c) { SHOWCASE[p.id] = c; render(); } })
+      .catch(() => {});
+  };
+  const proj = (p) => (SHOWCASE[p.id] ? { ...p, ...SHOWCASE[p.id] } : p);
+  const stageBar = (stage) => {
+    const i = STAGES.indexOf(stage);
+    if (i < 0) return "";
+    return `<ol class="stages" aria-label="${T().stageTitle}">${STAGES.map((s, k) =>
+      `<li class="${k < i ? "past" : k === i ? "now" : ""}"${k === i ? ' aria-current="step"' : ""}>${esc(T().stages[s])}</li>`).join("")}</ol>`;
+  };
+  const teamLine = (p) => (p.students?.length ? p.students.map(esc).join(" · ") : p.lead ? T().labResearch : T().noStudents);
+
   pages.projects = () => {
     const t = T();
+    PROJECTS.forEach(loadShowcase);
     const f = pages.projects.filter || "all";
-    const shown = f === "all" ? PROJECTS : PROJECTS.filter((p) => p.status === f);
+    const all = PROJECTS.map(proj);
+    const shown = f === "all" ? all : all.filter((p) => p.status === f);
     return `
       <div class="wrap page-head"><h1>${t.projTitle}</h1><p class="muted">${t.projLead}</p></div>
       <div class="wrap"><div class="filters">${Object.entries(t.status).map(([k, v]) => `<button type="button" data-status="${k}" class="${f === k ? "on" : ""}">${v}</button>`).join("")}</div></div>
       <section class="block" style="padding-top:0"><div class="wrap">
-        ${shown.length ? `<div class="grid">${shown.map((p) => `
-          <div class="card project">
-            ${p.video ? `<a class="thumb" href="${ytWatch(p.video)}" target="_blank" rel="noopener"><img loading="lazy" src="${thumb(p.video)}" alt=""></a>` : ""}
-            <div>${t.statusBadge[p.status] ? badge(t.statusBadge[p.status], STATUS_CLS[p.status]) : ""}</div>
+        ${shown.length ? `<div class="grid">${shown.map((p) => {
+          const href = `${P()}/project/${encodeURIComponent(p.id)}`;
+          const img = p.media?.find((m) => m.image)?.image;
+          return `
+          <a class="card project${p.lead ? " lead" : ""}" href="${href}">
+            ${p.video ? `<span class="thumb"><img loading="lazy" src="${thumb(p.video)}" alt=""></span>`
+              : img ? `<span class="thumb"><img loading="lazy" src="${esc(img)}" alt=""></span>`
+              : `<span class="thumb ph" aria-hidden="true">${esc(tr(p, "title")).slice(0, 1)}</span>`}
+            <div class="chips">${t.statusBadge[p.status] ? badge(t.statusBadge[p.status], STATUS_CLS[p.status]) : ""}${p.lead ? badge(t.projLeadTag) : ""}${p.remote ? badge(t.remoteTag) : ""}</div>
             <h3>${esc(tr(p, "title"))}</h3>
             <div class="muted">${esc(tr(p, "text"))}</div>
-            <div class="chips" style="margin-top:4px">${(p.tags || []).map((k) => topicChip(k)).join("")}</div>
-          </div>`).join("")}</div>` : `<div class="empty">${t.noProjects}</div>`}
+            ${(EN ? p.results_en || p.results : p.results)?.length ? `<div class="res">${esc((EN ? p.results_en || p.results : p.results)[0])}</div>` : ""}
+            <div class="meta"><span>${teamLine(p)}</span>${p.stage ? `<span>${t.stageTitle}: ${esc(t.stages[p.stage])}</span>` : ""}</div>
+          </a>`;
+        }).join("")}</div>` : `<div class="empty">${t.noProjects}</div>`}
       </div></section>
       <section class="block"><div class="wrap">
         <div class="callout">
@@ -459,6 +525,46 @@
           <a class="btn" href="mailto:${esc(SITE.email)}?subject=${encodeURIComponent(t.projSubject)}">${t.propose}</a>
         </div>
       </div></section>`;
+  };
+
+  pages.project = (id) => {
+    const t = T();
+    const base = PROJECTS.find((x) => x.id === id);
+    if (!base) return pages.notfound();
+    loadShowcase(base);
+    const p = proj(base);
+    const list = (k) => (EN ? p[k + "_en"] || p[k] : p[k]) || [];
+    const about = list("about"), results = list("results");
+    const media = p.media || [];
+    return `
+      <div class="wrap page-head">
+        <div class="crumbs"><a href="${P()}/projects">${t.projTitle}</a></div>
+        <h1>${esc(tr(p, "title"))}</h1>
+        <div class="chips">${t.statusBadge[p.status] ? badge(t.statusBadge[p.status], STATUS_CLS[p.status]) : ""}${p.lead ? badge(t.projLeadTag) : ""}${(p.tags || []).map((k) => topicChip(k)).join("")}</div>
+      </div>
+      <div class="wrap lab-page project-page">
+        <p class="lead-text">${esc(tr(p, "text"))}</p>
+        ${p.stage ? `<section><h2>${t.stageTitle}</h2>${stageBar(p.stage)}</section>` : ""}
+        ${p.video ? `<section><div class="video" id="video"><button type="button" data-id="${esc(p.video)}" style="background-image:url('${thumb(p.video, "hqdefault")}')" aria-label="${esc(tr(p, "title"))}"></button></div></section>` : ""}
+        ${about.length ? `<section><h2>${t.aboutProj}</h2>${about.map((x) => `<p>${esc(x)}</p>`).join("")}</section>` : ""}
+        ${results.length ? `<section><h2>${t.resultsTitle}</h2><ul class="tasks">${results.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>` : ""}
+        ${media.length ? `<section><h2>${t.mediaTitle}</h2><div class="grid">${media.map((m) => `
+          <figure class="fig">${m.youtube
+            ? `<a class="proj-media" href="${ytWatch(m.youtube)}" target="_blank" rel="noopener"><img loading="lazy" src="${thumb(m.youtube)}" alt=""></a>`
+            : `<a class="proj-media" href="${esc(m.image)}" target="_blank" rel="noopener"><img loading="lazy" src="${esc(m.image)}" alt=""></a>`}
+            ${tr(m, "caption") ? `<figcaption>${esc(tr(m, "caption"))}</figcaption>` : ""}</figure>`).join("")}</div></section>` : ""}
+        ${p.timeline?.length ? `<section><h2>${t.timelineTitle}</h2><ol class="timeline">${p.timeline.map((e) =>
+          `<li><b>${esc(e.date)}</b> ${esc(tr(e, "text"))}</li>`).join("")}</ol></section>` : ""}
+        <section><h2>${t.team}</h2><p>${teamLine(p)}</p>
+          ${p.repo && REPO_RE.test(p.repo) ? `<p><a class="btn ghost" href="https://github.com/${esc(p.repo)}" target="_blank" rel="noopener">${t.repo}</a></p>` : ""}
+          ${p.showcase ? `<p class="muted">${t.fromStudents}${p.updated ? ` ${t.updated}: ${esc(p.updated)}` : ""}</p>` : ""}
+        </section>
+        ${p.remote ? `<section><div class="callout"><div><h3>${t.remoteTag}</h3><div class="muted">${t.remoteText}</div></div></div></section>` : ""}
+        ${p.status === "open" ? `<section><div class="callout">
+          <div><h3>${t.joinThis}</h3><div class="muted">${t.proposeText}</div></div>
+          <a class="btn" href="mailto:${esc(SITE.email)}?subject=${encodeURIComponent(t.projSubject + ": " + tr(p, "title"))}">${t.propose}</a></div></section>` : ""}
+        <nav class="lab-nav"><span></span><a href="${P()}/projects">${t.allProjects}</a><span></span></nav>
+      </div>`;
   };
 
   pages.lab = () => {
@@ -913,7 +1019,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
   }
 
   /* ---------- router ---------- */
-  const navKey = { "": "home", courses: "courses", course: "courses", topics: "topics", topic: "topics", exam: "exam", lab: "lab", sdr: "lab", guide: "lab", rf: "lab", research: "research", projects: "projects", about: "about" };
+  const navKey = { "": "home", courses: "courses", course: "courses", topics: "topics", topic: "topics", exam: "exam", lab: "lab", sdr: "lab", guide: "lab", rf: "lab", research: "research", projects: "projects", project: "projects", about: "about" };
 
   function render() {
     let raw = location.hash.replace(/^#\/?/, "");
@@ -936,6 +1042,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       case "rf": html = pages.rf(); break;
       case "research": html = pages.research(); break;
       case "projects": html = pages.projects(); break;
+      case "project": html = pages.project(p1); break;
       case "about": html = pages.about(); break;
       case "search": html = pages.search(new URLSearchParams(query || "").get("q") || ""); break;
       default: html = pages.notfound();

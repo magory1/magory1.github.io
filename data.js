@@ -248,35 +248,74 @@ window.RESEARCH = [
 ];
 
 /*
- * פרויקטי סטודנטים – דוגמאות, לעדכן לפי המציאות.
- * status: "done" | "active" | "open" (פרויקט פתוח להצטרפות)
+ * פרויקטי סטודנטים ופרויקטים מובילים.
+ * כל פרויקט מקבל עמוד משלו: #/project/<id>
+ *
+ * status: "done" | "active" | "open" (פתוח להצטרפות)
+ * stage:  "idea" | "research" | "design" | "build" | "test" | "results" | "done"
+ * students: שמות הסטודנטים (מערך). ריק = עוד לא שובצו
+ * repo:     "owner/name" של מאגר ציבורי – מוצג כקישור
+ * showcase: "owner/name" של מאגר ציבורי שבו יש showcase.json – התוכן שהסטודנטים עורכים
+ *           (ראו projects/showcase.template.json). מה שבקובץ גובר על מה שכתוב כאן.
+ * remote:   true אם מתוכננת לפרויקט הפעלה מרחוק
+ * results / results_en: רשימת תוצאות קצרות. timeline: [{ date, text, text_en }]
  */
 window.PROJECTS = [
   {
-    title: "יירוט וניתוח אות של שלט רכב עם SDR",
-    title_en: "Intercepting and analyzing a car key fob signal with SDR",
-    status: "done",
-    text: "קליטת האות של שלט רכב, ניתוח האפנון וזיהוי מבנה ההודעה בעזרת רדיו מוגדר תוכנה.",
-    text_en: "Capturing a car key fob transmission, analyzing its modulation and identifying the message structure with a software-defined radio.",
-    video: "PIP7Lk2rBdU",
-    tags: ["sdr"],
-  },
-  {
-    title: "מערכת ניטור נשימה ודופק במכ״ם",
-    title_en: "Radar-based respiration and heart-rate monitor",
-    status: "open",
-    text: "בניית ממשק בזמן אמת למכ״ם IWR1843 ושיפור האלגוריתם להפרדת נשימה ודופק. מתאים לפרויקט גמר.",
-    text_en: "A real-time interface for the IWR1843 radar and an improved algorithm for separating respiration and heartbeat. Suitable as a final-year project.",
-    video: "gjVbqlQ8B88",
+    id: "sar-scanner",
+    title: "סורק SAR במכ״ם mmWave",
+    title_en: "mmWave SAR scanner",
+    status: "active",
+    stage: "test",
+    lead: true,
+    text: "מיפוי פני שטח של דגימות רקמה במכ״ם 77 GHz: מכ״ם IWR1843 עם DCA1000 שנע מעל הדגימה על מדפסת תלת-ממד מותאמת, ושחזור תמונת SAR ברזולוציה של כ-2 מ״מ.",
+    text_en: "Surface mapping of tissue samples with a 77 GHz radar: an IWR1843 with a DCA1000 scanned over the sample on a modified 3D printer, with SAR image reconstruction at about 2 mm resolution.",
+    about: [
+      "המכ״ם נע בתנועה מבוקרת מעל הדגימה, ובכל נקודה נקלט האות המוחזר. מהמדידות יחד משחזרים תמונה דו-ממדית של פני השטח, כאילו הייתה למכ״ם אנטנה גדולה.",
+      "הפרויקט כולל את המכניקה (מדפסת Ender-3 שהוסבה לסורק XYZ), איסוף נתונים גולמיים, כיול מול פלטת מתכת ועיבוד אותות לשחזור התמונה.",
+    ],
+    about_en: [
+      "The radar moves over the sample in a controlled path and records the reflected signal at each point. Together, the measurements are combined into a 2D image of the surface, as if the radar had a much larger antenna.",
+      "The project covers the mechanics (an Ender-3 printer converted into an XYZ scanner), raw data capture, calibration against a metal plate and the signal processing that reconstructs the image.",
+    ],
+    students: [],
     tags: ["radar"],
   },
   {
+    id: "keyfob-sdr",
+    title: "יירוט וניתוח אות של שלט רכב עם SDR",
+    title_en: "Intercepting and analyzing a car key fob signal with SDR",
+    status: "done",
+    stage: "done",
+    text: "קליטת האות של שלט רכב, ניתוח האפנון וזיהוי מבנה ההודעה בעזרת רדיו מוגדר תוכנה.",
+    text_en: "Capturing a car key fob transmission, analyzing its modulation and identifying the message structure with a software-defined radio.",
+    video: "PIP7Lk2rBdU",
+    students: [],
+    tags: ["sdr"],
+  },
+  {
+    id: "radar-vitals",
+    title: "מערכת ניטור נשימה ודופק במכ״ם",
+    title_en: "Radar-based respiration and heart-rate monitor",
+    status: "open",
+    stage: "idea",
+    text: "בניית ממשק בזמן אמת למכ״ם IWR1843 ושיפור האלגוריתם להפרדת נשימה ודופק. מתאים לפרויקט גמר.",
+    text_en: "A real-time interface for the IWR1843 radar and an improved algorithm for separating respiration and heartbeat. Suitable as a final-year project.",
+    video: "gjVbqlQ8B88",
+    students: [],
+    remote: true,
+    tags: ["radar"],
+  },
+  {
+    id: "yagi",
     title: "תכנון ובנייה של אנטנת Yagi",
     title_en: "Design and construction of a Yagi antenna",
     status: "open",
+    stage: "idea",
     text: "תכנון בסימולציה, בנייה ומדידה ב-Network Analyzer, והשוואה בין תאוריה, סימולציה ומדידה.",
     text_en: "Simulation-based design, construction and network-analyzer measurement, comparing theory, simulation and measurement.",
     video: "G4ZznuSo6DM",
+    students: [],
     tags: ["antennas"],
   },
 ];

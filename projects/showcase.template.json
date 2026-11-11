@@ -1,0 +1,19 @@
+{
+  "stage": "build",
+  "updated": "2026-11-11",
+  "students": ["שם סטודנט/ית 1", "שם סטודנט/ית 2"],
+  "text": "משפט או שניים שמתארים את הפרויקט.",
+  "text_en": "One or two sentences describing the project.",
+  "about": ["פסקה ראשונה על הפרויקט.", "פסקה שנייה."],
+  "about_en": ["First paragraph.", "Second paragraph."],
+  "results": ["תוצאה מדודה אחת, עם מספרים."],
+  "results_en": ["One measured result, with numbers."],
+  "video": "YOUTUBE_ID_11",
+  "media": [
+    { "image": "showcase/setup.jpg", "caption": "מערך הניסוי", "caption_en": "Experimental setup" },
+    { "youtube": "YOUTUBE_ID_11", "caption": "הדגמה", "caption_en": "Demo" }
+  ],
+  "timeline": [
+    { "date": "2026-10", "text": "בחירת נושא ותכנון", "text_en": "Topic selection and design" }
+  ]
+}
