@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-14T17:57Z",
+ "updated": "2026-11-14T22:19Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -306,7 +306,7 @@ window.YT_SYNC = {
   },
   {
    "id": "8h2ZchzSu1U",
-   "title": "תורת האינפורמציה שיעור שני הופמן מורחב קנוני וlz77",
+   "title": "Information Theory Lesson Two Canonical Extended Hoffman and lz77",
    "dur": "50:15"
   },
   {
