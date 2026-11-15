@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-14T22:19Z",
+ "updated": "2026-11-15T06:20Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -311,7 +311,7 @@ window.YT_SYNC = {
   },
   {
    "id": "oZWPGdDM34M",
-   "title": "lab 10 חיבור לסקופ והתמרת פוריה מעשית עם הסקופ",
+   "title": "Lab 10: Connecting to an Oscilloscope and Practical Fourier Transform with an Oscilloscope",
    "dur": "29:16"
   },
   {
