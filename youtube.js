@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-15T06:20Z",
+ "updated": "2026-11-15T16:19Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -280,6 +280,11 @@ window.YT_SYNC = {
  },
  "latest": [
   {
+   "id": "xv5eVN25AdU",
+   "title": "Electronic and Optical Communication 5",
+   "dur": "1:01:49"
+  },
+  {
    "id": "rn2HyQ_zm7U",
    "title": "Electronic and Optical Communication 4",
    "dur": "1:35:20"
@@ -306,17 +311,17 @@ window.YT_SYNC = {
   },
   {
    "id": "8h2ZchzSu1U",
-   "title": "Information Theory Lesson Two Canonical Extended Hoffman and lz77",
+   "title": "תורת האינפורמציה שיעור שני הופמן מורחב קנוני וlz77",
    "dur": "50:15"
   },
   {
    "id": "oZWPGdDM34M",
-   "title": "Lab 10: Connecting to an Oscilloscope and Practical Fourier Transform with an Oscilloscope",
+   "title": "lab 10 חיבור לסקופ והתמרת פוריה מעשית עם הסקופ",
    "dur": "29:16"
   },
   {
    "id": "G4ZznuSo6DM",
-   "title": "Lab 7- Antennas Laboratory 130833",
+   "title": "Lab 7 - Antennas Laboratory 130833",
    "dur": "42:26"
   },
   {
@@ -333,11 +338,6 @@ window.YT_SYNC = {
    "id": "0n0yl6kFnXw",
    "title": "Lab 4 - Antennas Laboratory 130833",
    "dur": "57:53"
-  },
-  {
-   "id": "G4mBBiFSB-8",
-   "title": "Lab 3 - Antennas Laboratory 130833",
-   "dur": "1:04:42"
   }
  ]
 };
