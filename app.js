@@ -664,7 +664,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       inCourse: "המעבדות בקורס", fromRx: "המקלט",
       components: "הרכיבים", compLead: "כל מה שמחברים בניסוי. התמונות מהמעבדה; לרכיבים בלי תמונה מופיע הסמל שלהם בסכמות.", ports: "חיבורים", usedIn: "חלקים", careful: "שימו לב",
       figures: "איורים לדוח", figLead: "אלה האיורים שמגישים, לפי הסדר. כל שלב שבו מצלמים מסומן ב-📷 עם מספר האיור.", figRulesH: "כללים לאיור טוב", fig: "איור", part: "חלק",
-      figSet: "הגדרות", figShow: "מה צריך לראות", figCheck: "השוו לתאוריה", kinds: { scope: "סקופ", spec: "נתח ספקטרום", graph: "גרף MATLAB" },
+      figSet: "הגדרות", figShow: "מה צריך לראות", figCheck: "השוו לתאוריה", kinds: { scope: "סקופ", spec: "נתח ספקטרום", graph: "גרף MATLAB", gui: "צילום מה-GUI" },
       tables: "טבלאות תוצאות", table1: "טבלה 1 – חלוקת ההספק (חלק 3)", table2: "טבלה 2 – משרעת מול פאזה (חלק 4)",
       table2Lead: "הכניסו את משרעת המידע (Pk-Pk) בכל פאזה. העמודה המנורמלת מחולקת בערך ב-0°.", phaseCol: "פאזה", ampCol: "משרעת", normCol: "מנורמל" },
     en: { guides: "Online lab guides", guidesLead: "Step-by-step guides for doing the labs: background, preparation, wiring and settings, report questions and MATLAB files.",
@@ -680,7 +680,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       inCourse: "Labs in this course", fromRx: "Receiver",
       components: "The components", compLead: "Everything you connect in this lab. Photos are from the lab; parts without a photo show the symbol used in the diagrams.", ports: "Ports", usedIn: "Parts", careful: "Careful",
       figures: "Figures for the report", figLead: "These are the figures you submit, in order. Every step where you capture one is marked 📷 with the figure number.", figRulesH: "Rules for a good figure", fig: "Figure", part: "Part",
-      figSet: "Settings", figShow: "What it must show", figCheck: "Compare with theory", kinds: { scope: "Scope", spec: "Spectrum analyzer", graph: "MATLAB graph" },
+      figSet: "Settings", figShow: "What it must show", figCheck: "Compare with theory", kinds: { scope: "Scope", spec: "Spectrum analyzer", graph: "MATLAB graph", gui: "GUI screenshot" },
       tables: "Results tables", table1: "Table 1 – power split (Part 3)", table2: "Table 2 – amplitude versus phase (Part 4)",
       table2Lead: "Enter the message amplitude (Pk-Pk) at each phase. The normalized column is divided by the 0° value.", phaseCol: "Phase", ampCol: "Amplitude", normCol: "Normalized" },
   };
@@ -724,7 +724,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     const total = g.parts.reduce((s, p) => s + p.steps.length, 0);
     const watch = allLessons.filter((x) => x.course?.id === "comm" && x.tags?.some((k) => g.tags.includes(k))).slice(0, 3);
     const toc = [["goals", gt.goals], ["theory", gt.theory], ["prep", gt.prep], ["components", gt.components], ["instruments", gt.instruments],
-      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["figures", gt.figures], ["results", gt.tables], ["files", gt.files], ["report", gt.report]];
+      ...g.parts.map((p, i) => [`part${i + 1}`, tr(p, "title")]), ["figures", gt.figures], ...(g.amTables || g.tables ? [["results", gt.tables]] : []), ["files", gt.files], ["report", gt.report]].filter(([k]) => k !== "figures" || g.figures).filter(([k]) => k !== "report" || g.report).filter(([k]) => k !== "components" || g.components);
     const FIG = (k) => (g.figures || []).find((f) => f.n === k);
     const step = (s) => {
       n += 1;
@@ -738,7 +738,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
           ${(s.fig || []).map((k) => `<button type="button" class="rec" data-goto="fig-${k}">📷 ${gt.fig} ${k}: ${esc(tr(FIG(k), "t"))}</button>`).join("")}
           ${s.hint ? `<details class="hint"><summary>${gt.hint}</summary><p>${tr(s, "hint")}</p></details>` : ""}
           ${s.sim ? `<button type="button" class="btn ghost small" data-goto="${s.sim === "rx" ? "sim-rx" : "sim-am"}">${gt.sim} ↑</button>` : ""}
-          ${s.table ? `<button type="button" class="btn ghost small" data-goto="results">${gt.table} ↓</button>` : ""}
+          ${s.table ? `<button type="button" class="btn ghost small" data-goto="results">${g.tables ? esc(tr(g.tables[0], "title")) : gt.table} ↓</button>` : ""}
           ${s.table2 ? `<button type="button" class="btn ghost small" data-goto="table2">${gt.table2} ↓</button>` : ""}
         </div></li>`;
     };
@@ -758,19 +758,19 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
 
           <section id="theory"><h2>${gt.theory}</h2>
             ${g.theory.map((s, i) => `<div class="theory-block"><h3>${esc(tr(s, "h"))}</h3>${figHtml(g, s.fig)}${tr(s, "body")}${figHtml(g, s.fig2)}
-              ${i === 1 ? `<div id="sim-am">${simAM()}</div>` : ""}${i === g.theory.length - 1 ? `<div id="sim-rx">${simRX()}</div>` : ""}</div>`).join("")}
+              ${s.sim === "am" ? `<div id="sim-am">${simAM()}</div>` : ""}${s.sim === "rx" ? `<div id="sim-rx">${simRX()}</div>` : ""}</div>`).join("")}
           </section>
 
           <section id="prep"><h2>${gt.prep}</h2>
             <h3>${gt.prepQ}</h3>
             <ol class="prep">${g.prep.map((p) => `<li><p>${tr(p, "q")}</p>${figHtml(g, p.fig)}${L(p, "items").length ? `<ol type="a">${L(p, "items").map((x) => `<li>${x}</li>`).join("")}</ol>` : ""}</li>`).join("")}</ol>
-            <p>${EN ? "Run" : "הריצו את"} <a href="${g.dir}/${g.files[0].file}" download dir="ltr">${g.files[0].file}</a> ${EN ? "to explore the signals before the lab." : "כדי לשחק עם האותות לפני המעבדה."}</p>
+            ${g.prepNote ? `<p class="prep-note">${tr(g, "prepNote")}</p>` : `<p>${EN ? "Run" : "הריצו את"} <a href="${g.dir}/${g.files[0].file}" download dir="ltr">${g.files[0].file}</a> ${EN ? "to explore the signals before the lab." : "כדי לשחק עם האותות לפני המעבדה."}</p>`}
             ${watch.length ? `<h3>${gt.watch}</h3><div class="grid">${watch.map((x) => thumbCard(x, `${P()}/course/${x.course.id}/${x.id}`)).join("")}</div>` : ""}
           </section>
 
           ${g.components ? `<section id="components"><h2>${gt.components}</h2><p class="muted">${gt.compLead}</p>
             <div class="comp-grid">${g.components.map((x) => `<article class="comp">
-              <div class="comp-img${x.img.length > 1 ? " two" : ""}">${x.img.map((f) => `<a href="${g.dir}/${f}" target="_blank" rel="noopener"><img loading="lazy" src="${g.dir}/${f}" alt="${esc(tr(x, "name"))}"${f.endsWith(".svg") ? ' class="sym"' : ""}></a>`).join("")}</div>
+              ${x.img?.length ? `<div class="comp-img${x.img.length > 1 ? " two" : ""}">` : ""}${(x.img || []).map((f) => `<a href="${g.dir}/${f}" target="_blank" rel="noopener"><img loading="lazy" src="${g.dir}/${f}" alt="${esc(tr(x, "name"))}"${f.endsWith(".svg") ? ' class="sym"' : ""}></a>`).join("")}${x.img?.length ? "</div>" : ""}
               <div class="comp-body"><h3>${esc(tr(x, "name"))}</h3><div class="comp-model"><bdi dir="ltr">${esc(x.model)}</bdi></div>
                 <p>${tr(x, "role")}</p>
                 ${x.ports.length ? `<dl class="comp-ports"><dt>${gt.ports}</dt>${x.ports.map(([k, he, en]) => `<dd><b dir="ltr">${esc(k)}</b> ${esc(EN ? en : he)}</dd>`).join("")}</dl>` : ""}
@@ -790,7 +790,14 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
               <div class="figreq-head"><span class="fignum">${gt.fig} ${f.n}</span><b>${esc(tr(f, "t"))}</b><span class="chip">${gt.part} ${f.part} · ${gt.kinds[f.kind]}</span></div>
               <dl><dt>${gt.figSet}</dt><dd dir="auto">${esc(tr(f, "set"))}</dd><dt>${gt.figShow}</dt><dd>${tr(f, "show")}</dd><dt>${gt.figCheck}</dt><dd>${tr(f, "check")}</dd></dl></li>`).join("")}</ol></section>` : ""}
 
-          <section id="results"><h2>${gt.tables}</h2><h3>${gt.table1}</h3><p class="muted">${gt.tableLead}</p>
+          ${g.tables ? `<section id="results"><h2>${gt.tables}</h2>${g.tables.map((T) => `<h3 id="tbl-${T.id}">${esc(tr(T, "title"))}</h3><p class="muted">${esc(tr(T, "lead"))}</p>
+            <div class="table-wrap"><table class="results gen" data-t="${T.id}" dir="ltr">
+              <thead><tr><th>${esc(EN ? T.rowHead[1] : T.rowHead[0])}</th>${T.cols.map((c) => `<th>${esc(EN ? c[1] : c[0])}</th>`).join("")}</tr></thead>
+              <tbody>${T.rows.map((r, ri) => `<tr><td>${esc(EN ? r[1] : r[0])}</td>${T.cols.map((c, ci) => `<td><input type="${c[2] === "num" ? "number" : "text"}"${c[2] === "num" ? ' step="any" inputmode="decimal"' : ""} data-cell="${ri}:${ci}" aria-label="${esc(EN ? r[1] : r[0])} ${esc(EN ? c[1] : c[0])}"></td>`).join("")}</tr>`).join("")}</tbody>
+            </table></div>
+            <button type="button" class="btn ghost" data-csv="gen:${T.id}">${gt.csv}</button>`).join("")}</section>` : ""}
+
+          ${g.amTables ? `<section id="results"><h2>${gt.tables}</h2><h3>${gt.table1}</h3><p class="muted">${gt.tableLead}</p>
             <div class="table-wrap"><table class="results power" dir="ltr">
               <thead><tr><th>${gt.depth}</th><th>${gt.left} [V]</th><th>${gt.center} [V]</th><th>${gt.right} [V]</th><th>${gt.total} [V]</th><th>${gt.infoV}</th><th>${gt.infoP}</th><th>${gt.theoryP}</th></tr></thead>
               <tbody>${[30, 50, 70, 100].map((d) => `<tr data-d="${d}"><td>${d}%</td>${["l", "c", "r"].map((k) => `<td><input type="number" step="0.001" min="0" inputmode="decimal" data-v="${k}" aria-label="${d}% ${k}"></td>`).join("")}<td data-o="tot">–</td><td data-o="iv">–</td><td data-o="ip">–</td><td>${(100 * (d / 100) ** 2 / (2 + (d / 100) ** 2)).toFixed(1)}%</td></tr>`).join("")}</tbody>
@@ -802,13 +809,13 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
               <tbody>${[0, 30, 60, 90].map((d) => `<tr data-p="${d}"><td>${d}°</td><td><input type="number" step="0.001" min="0" inputmode="decimal" data-v="a" aria-label="${d}°"></td><td data-o="nrm">–</td><td>${Math.cos(d * Math.PI / 180).toFixed(3)}</td></tr>`).join("")}</tbody>
             </table></div>
             <button type="button" class="btn ghost" data-csv="phase">${gt.csv}</button>
-          </section>
+          </section>` : ""}
 
 
           <section id="files"><h2>${gt.files}</h2>
             ${g.files.map((f) => `<div class="file-row">
               <div><b dir="ltr">${esc(f.file)}</b><div class="muted">${tr(f, "d")}</div></div>
-              <div class="file-actions"><a class="btn" href="${g.dir}/${f.file}" download>${gt.download}</a><button type="button" class="btn ghost" data-src="${g.dir}/${f.file}">${gt.show}</button></div>
+              <div class="file-actions"><a class="btn" href="${g.dir}/${f.file}" download>${gt.download}</a>${/\.(m|py|txt)$/.test(f.file) ? `<button type="button" class="btn ghost" data-src="${g.dir}/${f.file}">${gt.show}</button>` : ""}</div>
               <pre class="src" hidden dir="ltr"><code></code></pre></div>`).join("")}
           </section>
 
@@ -904,7 +911,12 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
         tr_.querySelector('[data-o="ip"]').textContent = ok && P_ ? (100 * (v.l ** 2 + v.r ** 2) / P_).toFixed(1) + "%" : "–";
       });
     };
-    app.querySelectorAll(".results input").forEach((i) => {
+    app.querySelectorAll(".results.gen input").forEach((i) => {
+      const id = "g:" + i.closest("table").dataset.t + ":" + i.dataset.cell;
+      if (tv[id] != null) i.value = tv[id];
+      i.addEventListener("input", () => { tv[id] = i.value; store(tkey, tv); });
+    });
+    app.querySelectorAll(".results.power input, .results.phase input").forEach((i) => {
       const r_ = i.closest("tr"), id = r_.dataset.d ? r_.dataset.d + i.dataset.v : "p" + r_.dataset.p;
       if (tv[id] != null) i.value = tv[id];
       i.addEventListener("input", () => { tv[id] = i.value; store(tkey, tv); calc(); });
@@ -913,7 +925,16 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
     // CSV: plain numbers with a one-line header, so MATLAB readmatrix can read it
     const num = (s) => s.replace(/[%°–]/g, "").trim();
     app.querySelectorAll("[data-csv]").forEach((b) => b.addEventListener("click", () => {
-      const kind = b.dataset.csv, sel = kind === "phase" ? ".results.phase" : ".results.power";
+      const kind = b.dataset.csv;
+      if (kind.startsWith("gen:")) {
+        const tb = app.querySelector(`.results.gen[data-t="${kind.slice(4)}"]`);
+        const q = (s) => /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+        const rows = [...tb.querySelectorAll("tr")].map((r) => [...r.children].map((c) => q((c.querySelector("input")?.value ?? c.textContent).trim())).join(","));
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob(["\ufeff" + rows.join("\n") + "\n"], { type: "text/csv" }));
+        a.download = root.dataset.guide + "_" + kind.slice(4) + ".csv"; a.click(); return;
+      }
+      const sel = kind === "phase" ? ".results.phase" : ".results.power";
       const head = kind === "phase" ? "phase_deg,amp_Vpp,normalized,cos_phi" : "depth_pct,left_V,center_V,right_V,total_V,info_V_pct,info_P_pct,theory_P_pct";
       const rows = [...app.querySelectorAll(sel + " tbody tr")].map((r) => [...r.children].map((c) => num(c.querySelector("input")?.value ?? c.textContent)).join(","));
       const a = document.createElement("a");

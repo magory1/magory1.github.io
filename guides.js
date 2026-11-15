@@ -10,6 +10,7 @@ window.GUIDES = [
     course: "comm-lab",
     num: 3,
     dir: "labs/lab03_am",
+    amTables: true,
     title: "מעבדה 3 – אפנון AM ו-DSB-SC",
     title_en: "Lab 3 – AM and DSB-SC modulation",
     summary: "בונים משדר AM ממיקסר ומפצלים, רואים את האות במישור הזמן והתדר, משווים ל-DSB-SC ומפענחים את המידע במקלט סינכרוני.",
@@ -49,7 +50,7 @@ $$k_a = \frac{V_{max}-V_{min}}{V_{max}+V_{min}},\qquad A_c = \frac{V_{max}+V_{mi
 <p class="note">Some books define \(x_{AM}=A_c[1+k_a m(t)]\cos 2\pi f_c t\), so the depth is \(k_a\max|m(t)|\). In both cases the depth is the coefficient of \(\cos 2\pi f_m t\). This lab uses the first definition.</p>`,
       },
       {
-        h: "אפנון AM במישור התדר", h_en: "AM in the frequency domain",
+        h: "אפנון AM במישור התדר", h_en: "AM in the frequency domain", sim: "am",
         fig: "am_spectrum.png",
         body: String.raw`<p>בעזרת הזהות \(\cos\alpha\cos\beta = \tfrac12[\cos(\alpha-\beta)+\cos(\alpha+\beta)]\):</p>
 $$x_{AM}(t) = A_c\cos 2\pi f_c t + \frac{A_m}{2}\cos 2\pi (f_c-f_m)t + \frac{A_m}{2}\cos 2\pi (f_c+f_m)t$$
@@ -85,7 +86,7 @@ $$x_{DSB}(t) = A_m\cos 2\pi f_m t\,\cos 2\pi f_c t$$
         body_en: String.raw`<p>From the DSB-SC equation, the transmitter is a <b>mixer</b> (multiplier) that multiplies the message \(m(t)\) by a carrier from a local oscillator (LO). The mixer output is DSB-SC. Adding the carrier itself (with a combiner – in the lab, a splitter used in reverse) gives AM.</p>`,
       },
       {
-        h: "המקלט הסינכרוני (קוהרנטי)", h_en: "The synchronous (coherent) receiver",
+        h: "המקלט הסינכרוני (קוהרנטי)", h_en: "The synchronous (coherent) receiver", sim: "rx",
         fig: "rx.svg",
         body: String.raw`<p>המקלט מכפיל את האות שהתקבל במתנד מקומי בתדר הגל הנושא, ואחר כך מסנן LPF משאיר רק את תדר ההפרש. עבור DSB-SC עם שגיאת פאזה \(\phi\):</p>
 $$m(t)\cos(2\pi f_c t)\cdot\cos(2\pi f_c t+\phi) = \tfrac12 m(t)\cos\phi + \underbrace{\tfrac12 m(t)\cos(4\pi f_c t+\phi)}_{\text{removed by the LPF}}$$
@@ -375,6 +376,374 @@ $$\hat m(t) = \tfrac12 m(t)\cos(2\pi\Delta f\, t)$$
       { file: "lab03_coherent_receiver.m", d: "סימולציה של חלק 4: מקלט סינכרוני עם שגיאת פאזה ושגיאת תדר. השוו לסקופ.", d_en: "Simulation of Part 4: a synchronous receiver with phase and frequency errors. Compare with the scope." },
       { file: "lab03_report_plots.m", d: "אחרי המעבדה: קורא את שתי טבלאות ה-CSV מהאתר ומצייר את איורים 6 ו-10 – מדידה מול תאוריה – ושומר אותם כ-PNG לדוח.", d_en: "After the lab: reads the two CSV tables from the site, draws Figures 6 and 10 – measurement versus theory – and saves them as PNG for the report." },
       { file: "lab03_scope_analysis.m", d: "אחרי המעבדה: טוען קובץ CSV מהסקופ, מוצא את המעטפת, מחשב \\(V_{max}, V_{min}\\) ועומק אפנון ומציג ספקטרום.", d_en: "After the lab: loads a scope CSV file, finds the envelope, computes \\(V_{max}, V_{min}\\) and the depth, and plots the spectrum." },
+    ],
+  },
+  {
+    id: "sdr",
+    course: "comm-lab",
+    dir: "labs/sdr_spectrum",
+    title: "מעבדת SDR – מה יש באוויר? רוחב סרט של אותות אמיתיים",
+    title_en: "SDR lab – What is on the air? The bandwidth of real signals",
+    summary: "עם ADALM-Pluto ו-MATLAB סורקים את הספקטרום, לומדים מה כל פרמטר של ה-SDR עושה ומה המגבלות שלו, מאזינים לתחנת FM ומודדים את רוחב הסרט של אותות אנלוגיים ודיגיטליים.",
+    summary_en: "With an ADALM-Pluto and MATLAB you scan the spectrum, learn what every SDR parameter does and where its limits are, listen to an FM station and measure the bandwidth of analog and digital signals.",
+    time: "שעה במעבדה + חצי שעה הכנה", time_en: "1 hour in the lab + 30 min preparation",
+    tags: ["sdr", "fm", "spectrum"],
+    goals: [
+      "להבין את מבנה מקלט ה-SDR ואת הפרמטרים שלו: תדר מרכזי, קצב דגימה, גודל FFT והגבר.",
+      "לראות בעיניים את המגבלות: רוחב התמונה, רזולוציה, רצפת רעש, רוויה של ה-ADC, ה-DC spike וה-image.",
+      "לסרוק את רצועת ה-FM, למדוד רוחב סרט של תחנה ולהאזין לה – כולל הפירוק של אות ה-MPX.",
+      "להשוות צורת ספקטרום של אותות אנלוגיים (FM, AM) ודיגיטליים (LTE, Wi-Fi, ADS-B) ולמדוד את רוחב הסרט שלהם.",
+    ],
+    goals_en: [
+      "Understand the structure of an SDR receiver and its parameters: center frequency, sample rate, FFT size and gain.",
+      "See the limits with your own eyes: span, resolution, noise floor, ADC saturation, the DC spike and the image.",
+      "Scan the FM band, measure the bandwidth of a station and listen to it – including the parts of the MPX signal.",
+      "Compare the spectrum shapes of analog (FM, AM) and digital (LTE, Wi-Fi, ADS-B) signals and measure their bandwidth.",
+    ],
+    equipment: ["ADALM-Pluto עם 2 אנטנות", "כבל micro-USB לנתונים", "מחשב עם MATLAB R2021a ומעלה, Communications Toolbox וחבילת התמיכה ל-ADALM-Pluto", "קבצי המעבדה (ZIP למטה)"],
+    equipment_en: ["ADALM-Pluto with 2 antennas", "micro-USB data cable", "Computer with MATLAB R2021a or newer, Communications Toolbox and the ADALM-Pluto support package", "The lab files (ZIP below)"],
+    prepNote: "את כל התוכנות אפשר להריץ בבית <b>בלי רדיו</b>: הורידו את ה-ZIP, פתחו ב-MATLAB והריצו <code dir='ltr'>sdr_spectrum_explorer</code>. הסימולטור מייצר את אותם אותות ואת אותן מגבלות (רעש, רוויה, DC spike) כמו הרדיו האמיתי.",
+    prepNote_en: "You can run all the software at home <b>without a radio</b>: download the ZIP, open MATLAB and run <code>sdr_spectrum_explorer</code>. The simulator produces the same signals and the same limits (noise, saturation, DC spike) as the real radio.",
+
+    theory: [
+      {
+        h: "מה זה SDR, ומה קורה בתוך ה-Pluto", h_en: "What an SDR is, and what happens inside the Pluto",
+        fig: "pluto_rx.svg",
+        body: String.raw`<p>ב-<b>Software Defined Radio</b> רק החלק הראשון של המקלט הוא חומרה: מגבר (LNA), מערבל שמוריד את האות לסביבת ⁦0 Hz⁩, מסנן ו-ADC. כל השאר – סינון, גילוי, פענוח – נעשה בתוכנה, ולכן אותו רדיו יכול לקלוט FM, LTE או מכ״ם.</p>
+<p>ה-Pluto הוא <b>מקלט המרה ישירה</b> (zero-IF): המתנד המקומי (LO) מכוון לתדר המרכזי \(f_c\), ושני מערבלים – עם \(\cos\) ועם \(\sin\) – נותנים שני ערוצים, I ו-Q. יחד הם אות מרוכב אחד:</p>
+$$x[n] = I[n] + jQ[n],\qquad s_{RF}(t) = \mathrm{Re}\{x(t)\,e^{j2\pi f_c t}\}$$
+<p>כלומר הספקטרום של \(x\) הוא הספקטרום של האוויר, מוזז ב-\(f_c\): קו בתדר \(f_{RF}\) מופיע ב-\(f_{bb} = f_{RF} - f_c\). בגלל שהאות מרוכב, יש לו תדרים חיוביים <b>ושליליים</b> שונים זה מזה – ולכן רואים את כל הרצועה \(f_c \pm f_s/2\), ברוחב \(f_s\) שלם (ולא \(f_s/2\) כמו בדגימה ממשית).</p>
+<p>בתרשים מסומנים בכתום ארבעת הפרמטרים שנותנים ל-<code dir="ltr">comm.SDRRxPluto</code>, ליד החלק במקלט שהם קובעים.</p>`,
+        body_en: String.raw`<p>In a <b>Software Defined Radio</b> only the first part of the receiver is hardware: an amplifier (LNA), a mixer that brings the signal down to around 0 Hz, a filter and an ADC. Everything else – filtering, detection, decoding – is software, so the same radio can receive FM, LTE or radar.</p>
+<p>The Pluto is a <b>direct-conversion</b> (zero-IF) receiver: the local oscillator (LO) is tuned to the center frequency \(f_c\), and two mixers – with \(\cos\) and with \(\sin\) – give two channels, I and Q. Together they form one complex signal:</p>
+$$x[n] = I[n] + jQ[n],\qquad s_{RF}(t) = \mathrm{Re}\{x(t)\,e^{j2\pi f_c t}\}$$
+<p>So the spectrum of \(x\) is the spectrum of the air shifted by \(f_c\): a line at \(f_{RF}\) appears at \(f_{bb} = f_{RF} - f_c\). Because the signal is complex, its positive and <b>negative</b> frequencies are different – so you see the whole band \(f_c \pm f_s/2\), a full \(f_s\) wide (not \(f_s/2\) as with real sampling).</p>
+<p>The diagram marks in orange the four parameters you give <code>comm.SDRRxPluto</code>, next to the part of the receiver they control.</p>`,
+      },
+      {
+        h: "ארבעת הפרמטרים, ומה כל אחד קובע", h_en: "The four parameters, and what each one sets",
+        fig: "band_map.png",
+        body: String.raw`<ol>
+<li><b>CenterFrequency</b> \(f_c\) – אמצע התמונה. במצב המקורי (AD9363) הטווח ⁦325 MHz–3.8 GHz⁩; במצב AD9364 – ⁦70 MHz–6 GHz⁩, וזה מה שצריך בשביל רצועת ה-FM.</li>
+<li><b>BasebandSampleRate</b> \(f_s\) – רוחב התמונה. ה-Pluto דוגם עד ⁦61.44 MSPS⁩, אבל דרך USB 2.0 עובר ברצף רק בערך ⁦4 MSPS⁩. מעל זה הלכידות עדיין טובות לספקטרום, אבל יש "חורים" בין מסגרות (overflow) – אסור לרצף אודיו.</li>
+<li><b>SamplesPerFrame</b> \(N\) = גודל ה-FFT – הרזולוציה. כל bin רוחבו \(f_s/N\), וזמן הלכידה \(N/f_s\). רזולוציה טובה בתדר = לכידה ארוכה בזמן.</li>
+<li><b>Gain</b> (⁦0–71 dB⁩) – כמה מגבירים לפני ה-ADC. מעט מדי: האותות החלשים נבלעים ברעש של ה-ADC. יותר מדי: ה-ADC נכנס לרוויה, ומופיעים אותות שלא קיימים.</li>
+</ol>
+$$\text{span} = f_s,\qquad \Delta f_{bin} = \frac{f_s}{N},\qquad RBW_{Hann} \approx 1.5\,\frac{f_s}{N},\qquad T = \frac{N}{f_s}$$
+<p>ל-ADC של 12 ביט יש תחום דינמי של בערך \(6.02\cdot 12 + 1.76 \approx 74\) dB. כדי לנצל אותו, מכוונים את ההגבר כך שהאות החזק ביותר יגיע ל-⁦10–20 dB⁩ מתחת ל-full scale (⁦0 dBFS⁩).</p>
+<p class="note">רצפת הרעש ב-dBFS לכל bin תלויה ב-\(N\): הרעש מתפזר על כל ה-bins, ולכן כשמכפילים את \(N\) הרעש בכל bin יורד ב-⁦3 dB⁩ – וקו צר (טון) נשאר באותה רמה. לכן משווים רמות רק באותן הגדרות.</p>`,
+        body_en: String.raw`<ol>
+<li><b>CenterFrequency</b> \(f_c\) – the middle of the picture. In the original mode (AD9363) the range is 325 MHz–3.8 GHz; in AD9364 mode it is 70 MHz–6 GHz, which you need for the FM band.</li>
+<li><b>BasebandSampleRate</b> \(f_s\) – the width of the picture. The Pluto samples up to 61.44 MSPS, but USB 2.0 carries only about 4 MSPS continuously. Above that, captures are still fine for spectra, but there are gaps between frames (overflow) – no continuous audio.</li>
+<li><b>SamplesPerFrame</b> \(N\) = the FFT size – the resolution. Each bin is \(f_s/N\) wide and the capture lasts \(N/f_s\). Fine frequency resolution = a long capture in time.</li>
+<li><b>Gain</b> (0–71 dB) – how much you amplify before the ADC. Too little: weak signals drown in the ADC noise. Too much: the ADC saturates and signals that do not exist appear.</li>
+</ol>
+$$\text{span} = f_s,\qquad \Delta f_{bin} = \frac{f_s}{N},\qquad RBW_{Hann} \approx 1.5\,\frac{f_s}{N},\qquad T = \frac{N}{f_s}$$
+<p>A 12-bit ADC has a dynamic range of about \(6.02\cdot 12 + 1.76 \approx 74\) dB. To use it, set the gain so the strongest signal sits 10–20 dB below full scale (0 dBFS).</p>
+<p class="note">The noise floor in dBFS per bin depends on \(N\): the noise spreads over all bins, so doubling \(N\) lowers the noise in each bin by 3 dB – while a narrow line (a tone) stays at the same level. So compare levels only with the same settings.</p>`,
+      },
+      {
+        h: "מגבלות ותופעות שתראו על המסך", h_en: "Limits and effects you will see on the screen",
+        fig: "theory_gain.png", fig2: "theory_dc.png",
+        body: String.raw`<ul>
+<li><b>DC spike</b> – קו קבוע בדיוק באמצע התמונה: דליפה של ה-LO לכניסה. זה לא אות! הפתרון: <b>offset tuning</b> – מכוונים קצת לצד של האות ומזיזים אותו בחזרה בתוכנה.</li>
+<li><b>Image</b> – העתק חלש של אות חזק, בצד השני של המרכז (\(f_c - \Delta\) במקום \(f_c + \Delta\)), כי ערוצי I ו-Q לא מאוזנים בדיוק. בערך ⁦40 dB⁩ מתחת לאות.</li>
+<li><b>שוליים</b> – המסננים מנחיתים את ה-10% החיצוניים בכל צד, ואותות קצת מחוץ לתחום יכולים "להתקפל" פנימה (aliasing). סומכים רק על 80% האמצעיים – כך גם עובדת הסריקה (Sweep) בממשק.</li>
+<li><b>רוויה (clipping)</b> – כשהאות מגיע ל-⁦0 dBFS⁩, הרצפה עולה ומופיעים קווים מזויפים (מוצרי אי-לינאריות). הממשק מתריע באדום.</li>
+<li><b>דיוק תדר</b> – המתנד של ה-Pluto מדויק לבערך ⁦±25 ppm⁩: ב-⁦100 MHz⁩ זה עד ⁦±2.5 kHz⁩, וב-⁦2.4 GHz⁩ עד ⁦±60 kHz⁩. לכן תחנה יכולה להופיע קצת זזה.</li>
+</ul>
+<p>שני האיורים נוצרו בסימולטור עם <code dir="ltr">sdr_lab2_parameters</code>: למעלה – רמות ו-SNR כפונקציה של ההגבר; למטה – ה-DC spike, וה-image של התחנה (ב-⁦98.2 MHz⁩) כשמכוונים ⁦400 kHz⁩ מתחתיה.</p>`,
+        body_en: String.raw`<ul>
+<li><b>DC spike</b> – a constant line exactly in the middle: LO leakage into the input. It is not a signal! The fix: <b>offset tuning</b> – tune a little to the side of the signal and shift it back in software.</li>
+<li><b>Image</b> – a weak copy of a strong signal on the other side of the center (\(f_c - \Delta\) instead of \(f_c + \Delta\)), because the I and Q channels are not perfectly balanced. About 40 dB below the signal.</li>
+<li><b>Edges</b> – the filters attenuate the outer 10% on each side, and signals just outside the span can fold in (aliasing). Trust only the middle 80% – this is also how the Sweep in the GUI works.</li>
+<li><b>Saturation (clipping)</b> – when the signal reaches 0 dBFS, the floor rises and false lines (nonlinear products) appear. The GUI warns in red.</li>
+<li><b>Frequency accuracy</b> – the Pluto's oscillator is accurate to about ±25 ppm: at 100 MHz that is up to ±2.5 kHz, at 2.4 GHz up to ±60 kHz. So a station may appear slightly shifted.</li>
+</ul>
+<p>Both figures were made in the simulator with <code>sdr_lab2_parameters</code>: top – levels and SNR versus gain; bottom – the DC spike, and the station's image (at 98.2 MHz) when tuned 400 kHz below it.</p>`,
+      },
+      {
+        h: "רוחב סרט: איך מודדים, ולמה אנלוגי ודיגיטלי נראים שונה", h_en: "Bandwidth: how to measure it, and why analog and digital look different",
+        fig: "shapes.png",
+        body: String.raw`<p>יש שתי הגדרות מקובלות. <b>רוחב x dB</b> – המרחק בין שתי הנקודות שבהן הספקטרום יורד x dB מתחת לשיא (‎-3, ‎-⁦26 dB⁩). <b>רוחב סרט תפוס (99%)</b> – הרוחב שמכיל 99% מההספק, כש-0.5% נשארים בחוץ בכל צד (ההגדרה של ITU). לאותות עם קו נושא חזק (AM, ADS-B) רוחב x dB מטעה – הוא מודד את הקו ולא את האות – ולכן ה-99% הוא המדד האמין.</p>
+<p><b>אנלוגי:</b> הצורה תלויה בתוכן ומשתנה כל הזמן. ל-AM: \(B = 2W\) (קול ⁦3 kHz⁩ ← ⁦6 kHz⁩). ל-FM כלל קרסון:</p>
+$$B_{FM} \approx 2(\Delta f + W)$$
+<p>שידור FM מסחרי: \(\Delta f = 75\) kHz. במונו \(W = 15\) kHz ← ⁦180 kHz⁩; בסטריאו אות ה-MPX מגיע ל-⁦53 kHz⁩ ← עד ⁦256 kHz⁩. בפועל רוב הזמן התחנה תופסת ⁦150–200 kHz⁩. PMR446: \(\Delta f = 2.5\), \(W = 3\) kHz ← ⁦11 kHz⁩.</p>
+<p><b>דיגיטלי:</b> הצורה קבועה ונקבעת בתקן, לא בתוכן – "קוביה" שטוחה עם קצוות חדים (OFDM), או צורת פולס. ב-OFDM:</p>
+$$B \approx N_{sc}\cdot\Delta f_{sc}$$
+<p>LTE ⁦20 MHz⁩: \(1200 \times 15\) kHz = ⁦18 MHz⁩. Wi-Fi ⁦20 MHz⁩: \(52 \times 312.5\) kHz = ⁦16.25 MHz⁩. ADS-B: פולסים של ⁦0.5 µs⁩ ← אונה ראשית ברוחב \(2/T\) = ⁦4 MHz⁩.</p>`,
+        body_en: String.raw`<p>There are two common definitions. <b>x dB bandwidth</b> – the distance between the two points where the spectrum drops x dB below its peak (-3, -26 dB). <b>Occupied (99%) bandwidth</b> – the width that holds 99% of the power, with 0.5% left outside on each side (the ITU definition). For signals with a strong carrier line (AM, ADS-B) the x dB width is misleading – it measures the line, not the signal – so the 99% width is the reliable number.</p>
+<p><b>Analog:</b> the shape depends on the content and changes all the time. AM: \(B = 2W\) (3 kHz voice → 6 kHz). FM, Carson's rule:</p>
+$$B_{FM} \approx 2(\Delta f + W)$$
+<p>Commercial FM broadcast: \(\Delta f = 75\) kHz. Mono \(W = 15\) kHz → 180 kHz; stereo MPX reaches 53 kHz → up to 256 kHz. In practice a station occupies 150–200 kHz most of the time. PMR446: \(\Delta f = 2.5\), \(W = 3\) kHz → 11 kHz.</p>
+<p><b>Digital:</b> the shape is fixed by the standard, not by the content – a flat "block" with sharp edges (OFDM), or a pulse shape. For OFDM:</p>
+$$B \approx N_{sc}\cdot\Delta f_{sc}$$
+<p>LTE 20 MHz: \(1200 \times 15\) kHz = 18 MHz. Wi-Fi 20 MHz: \(52 \times 312.5\) kHz = 16.25 MHz. ADS-B: 0.5 µs pulses → main lobe \(2/T\) = 4 MHz wide.</p>`,
+      },
+      {
+        h: "בתוך שידור FM: מה המקלט עושה", h_en: "Inside an FM broadcast: what the receiver does",
+        fig: "fm_listen.png",
+        body: String.raw`<p>הפונקציה <code dir="ltr">sdr_fm_listen</code> עושה את כל המקלט בכמה שורות: מכוונת ⁦200 kHz⁩ מתחת לתחנה (offset tuning), מזיזה את התחנה ל-⁦0 Hz⁩, מסננת ⁦±120 kHz⁩, ואז מגלה FM – התדר הרגעי הוא שינוי הפאזה בין דגימות:</p>
+$$f_{inst}[n] = \frac{f_s}{2\pi}\,\arg\!\big(x[n]\,x^*[n-1]\big)$$
+<p>התוצאה היא אות ה-<b>MPX</b>, ובו רואים את המבנה של שידור סטריאו: L+R (מונו) ב-⁦0–15 kHz⁩, <b>פיילוט</b> ב-⁦19 kHz⁩, L−R ב-DSB-SC סביב ⁦38 kHz⁩ (⁦23–53 kHz⁩) ונתוני <b>RDS</b> ב-⁦57 kHz⁩. בשביל אודיו מונו מסננים ⁦15 kHz⁩, יורדים ל-⁦48 kHz⁩ ומפעילים de-emphasis של ⁦50 µs⁩ (התקן באירופה ובישראל).</p>
+<p class="note">זה בדיוק ה-DSB-SC ממעבדה 3: ה-L−R משודר בלי נושא, והפיילוט ב-⁦19 kHz⁩ הוא מה שמאפשר למקלט לשחזר את הנושא ב-⁦38 kHz⁩ (פי 2).</p>`,
+        body_en: String.raw`<p>The function <code>sdr_fm_listen</code> is the whole receiver in a few lines: it tunes 200 kHz below the station (offset tuning), shifts the station to 0 Hz, filters ±120 kHz, then demodulates FM – the instantaneous frequency is the phase change between samples:</p>
+$$f_{inst}[n] = \frac{f_s}{2\pi}\,\arg\!\big(x[n]\,x^*[n-1]\big)$$
+<p>The result is the <b>MPX</b> signal, which shows the structure of a stereo broadcast: L+R (mono) at 0–15 kHz, the <b>pilot</b> at 19 kHz, L−R as DSB-SC around 38 kHz (23–53 kHz) and <b>RDS</b> data at 57 kHz. For mono audio: filter at 15 kHz, go down to 48 kHz and apply 50 µs de-emphasis (the European and Israeli standard).</p>
+<p class="note">This is exactly the DSB-SC from Lab 3: L−R is sent without a carrier, and the 19 kHz pilot is what lets the receiver rebuild the 38 kHz carrier (×2).</p>`,
+      },
+    ],
+
+    components: [
+      { name: "ADALM-Pluto", name_en: "ADALM-Pluto", model: "Analog Devices · AD9363/AD9364 · 12 bit", parts: "1–4",
+        role: "מקלט ומשדר SDR קטן: מקלט המרה ישירה עם ADC של 12 ביט, שמחובר למחשב ב-USB. במעבדה הזאת משתמשים רק במקלט (RX).",
+        role_en: "A small SDR transceiver: a direct-conversion receiver with a 12-bit ADC, connected to the computer over USB. This lab uses the receiver (RX) only.",
+        ports: [["RX", "כניסת אנטנה (SMA) – כאן מחברים את האנטנה", "antenna input (SMA) – connect the antenna here"], ["TX", "מוצא שידור – לא בשימוש. לא משדרים!", "transmit output – not used. Do not transmit!"], ["USB", "נתונים ומתח (השקע עם סמל ה-USB)", "data and power (the port with the USB symbol)"]],
+        tip: "מחברים ומנתקים אנטנות רק כשהרדיו כבוי מ-USB, וסוגרים את MATLAB או קוראים release(rx) לפני שמנתקים את הכבל.",
+        tip_en: "Connect and disconnect antennas only with the radio unplugged, and close MATLAB or call release(rx) before unplugging the cable." },
+      { name: "אנטנות", name_en: "Antennas", model: "SMA whip", parts: "1–4",
+        role: "האנטנות הקטנות שמגיעות עם ה-Pluto מותאמות לתדרים הסלולריים (⁦~800–900 MHz⁩ ו-⁦1.8–2.1 GHz⁩). ב-FM (⁦100 MHz⁩) הן קצרות מדי, אבל התחנות חזקות מספיק.",
+        role_en: "The small antennas that come with the Pluto are tuned to cellular frequencies (~800–900 MHz and 1.8–2.1 GHz). At FM (100 MHz) they are too short, but the stations are strong enough.",
+        ports: [], tip: "אנטנה טובה ל-FM היא חוט באורך רבע גל: \\(\\lambda/4 = c/(4f) \\approx 75\\) ס״מ. ליד החלון הקליטה טובה יותר.",
+        tip_en: "A good FM antenna is a quarter-wave wire: \\(\\lambda/4 = c/(4f) \\approx 75\\) cm. Reception is better near the window." },
+      { name: "המחשב והתוכנה", name_en: "Computer and software", model: "MATLAB R2021a+", parts: "1–4",
+        role: "MATLAB עם Communications Toolbox וחבילת התמיכה ל-ADALM-Pluto. כל קבצי המעבדה באותה תיקייה. הסקריפט sdr_setup_check בודק הכול.",
+        role_en: "MATLAB with Communications Toolbox and the ADALM-Pluto support package. All lab files in one folder. The script sdr_setup_check checks everything.",
+        ports: [], tip: "רק תוכנה אחת יכולה להשתמש ברדיו בכל רגע. לפני שפותחים את הממשק, שחררו את הרדיו בסקריפט (release).",
+        tip_en: "Only one program can use the radio at a time. Before you open the GUI, release the radio in your script (release)." },
+    ],
+
+    instruments: [
+      { h: "לפני שמתחילים", h_en: "Before you start",
+        body: "במעבדה הזאת רק קולטים – לא משדרים. קליטה מותרת בכל תדר; שידור מחייב רישיון. אל תחברו את ה-TX לאנטנה. לפני שמחליפים סקריפט, הריצו release(rx) או סגרו את הממשק – אחרת תקבלו שגיאה שהרדיו תפוס.",
+        body_en: "In this lab you only receive – never transmit. Receiving is allowed on any frequency; transmitting needs a license. Do not connect TX to an antenna. Before switching scripts, run release(rx) or close the GUI – otherwise you get an error that the radio is busy." },
+      { h: "הממשק sdr_spectrum_explorer", h_en: "The GUI sdr_spectrum_explorer",
+        body: "בצד שמאל: מקור (סימולטור או Pluto), Preset לכל רצועה, הפרמטרים של המקלט, תצוגה ופעולות. Run מציג ספקטרום ו-waterfall חיים; Sweep מחבר כמה לכידות לרצועה רחבה; לחיצה על אות מודדת את רוחב הסרט (‎-3/-6/-20/-⁦26 dB⁩ ו-99%). בשורת הסטטוס: Span, RBW, זמן לכידה, שיא ה-ADC ואזהרות. Save PNG שומר את כל החלון לדוח.",
+        body_en: "On the left: source (simulator or Pluto), a Preset for each band, the receiver parameters, display and actions. Run shows a live spectrum and waterfall; Sweep joins several captures into a wide band; clicking a signal measures its bandwidth (-3/-6/-20/-26 dB and 99%). The status line shows span, RBW, capture time, ADC peak and warnings. Save PNG saves the whole window for the report." },
+      { h: "הרצת סקריפט לפי סעיפים", h_en: "Running a script section by section",
+        body: "הסקריפטים מחולקים לסעיפים שמתחילים ב-%%. עומדים בתוך סעיף ולוחצים Ctrl+Enter (ב-Mac: Cmd+Enter) – רק הסעיף הזה רץ. כך אפשר לשנות פרמטר ולהריץ שוב בלי להתחיל מהתחלה.",
+        body_en: "The scripts are split into sections that start with %%. Put the cursor inside a section and press Ctrl+Enter (Mac: Cmd+Enter) – only that section runs. This way you can change a parameter and run again without starting over." },
+      { h: "למדריך המעבדה: מצב AD9364", h_en: "For the instructor: AD9364 mode",
+        body: "Pluto חדש מגיע במצב AD9363 (⁦325 MHz–3.8 GHz⁩) ולא קולט FM. פעם אחת לכל רדיו: ב-MATLAB הריצו configurePlutoRadio('AD9364'), או דרך SSH: fw_setenv attr_name compatible; fw_setenv attr_val ad9364; reboot. אחרי זה הטווח ⁦70 MHz–6 GHz⁩. sdr_setup_check מראה באיזה מצב כל רדיו.",
+        body_en: "A new Pluto ships in AD9363 mode (325 MHz–3.8 GHz) and cannot receive FM. Once per radio: in MATLAB run configurePlutoRadio('AD9364'), or over SSH: fw_setenv attr_name compatible; fw_setenv attr_val ad9364; reboot. After that the range is 70 MHz–6 GHz. sdr_setup_check shows which mode each radio is in." },
+    ],
+
+    prep: [
+      { q: "ה-Pluto מכוון ל-\\(f_c\\) = ⁦100 MHz⁩ עם \\(f_s\\) = ⁦4 MSPS⁩ ו-\\(N\\) = 4096. מצאו:", q_en: "The Pluto is tuned to \\(f_c\\) = 100 MHz with \\(f_s\\) = 4 MSPS and \\(N\\) = 4096. Find:",
+        items: ["את תחום התדרים שרואים על המסך.", "את רוחב ה-bin ואת ה-RBW (חלון Hann).", "כמה זמן נמשכת לכידה של FFT אחד.", "כמה Mbit/s עוברים ב-USB (דגימות של 16 ביט ל-I ול-Q)."],
+        items_en: ["The frequency range you see on the screen.", "The bin width and the RBW (Hann window).", "How long one FFT capture lasts.", "How many Mbit/s go over USB (16-bit samples for I and for Q)."] },
+      { q: "רוצים לראות את כל רצועת ה-FM, ⁦87.5–108 MHz⁩, עם \\(f_s\\) = ⁦4 MSPS⁩, ומשתמשים רק ב-80% האמצעיים של כל לכידה. כמה לכידות צריך? ומה היתרון של \\(f_s\\) = ⁦20 MSPS⁩? מה המחיר?",
+        q_en: "You want to see the whole FM band, 87.5–108 MHz, with \\(f_s\\) = 4 MSPS, using only the middle 80% of each capture. How many captures do you need? What is the advantage of \\(f_s\\) = 20 MSPS? What does it cost?", items: [], items_en: [] },
+      { q: "לפי כלל קרסון, חשבו את רוחב הסרט של:", q_en: "Using Carson's rule, compute the bandwidth of:",
+        items: ["שידור FM במונו (\\(\\Delta f\\) = ⁦75 kHz⁩, \\(W\\) = ⁦15 kHz⁩).", "שידור FM בסטריאו (\\(W\\) = ⁦53 kHz⁩).", "מכשיר קשר PMR446 (\\(\\Delta f\\) = ⁦2.5 kHz⁩, \\(W\\) = ⁦3 kHz⁩)."],
+        items_en: ["Mono FM broadcast (\\(\\Delta f\\) = 75 kHz, \\(W\\) = 15 kHz).", "Stereo FM broadcast (\\(W\\) = 53 kHz).", "A PMR446 radio (\\(\\Delta f\\) = 2.5 kHz, \\(W\\) = 3 kHz)."] },
+      { q: "ערוץ LTE של ⁦20 MHz⁩ משתמש ב-1200 תת-נושאים ברווח ⁦15 kHz⁩. מה רוחב הסרט התפוס? איזה \\(f_s\\) מינימלי צריך כדי לראות אותו שלם בלכידה אחת (80% שימושיים)?",
+        q_en: "A 20 MHz LTE channel uses 1200 subcarriers spaced 15 kHz. What is the occupied bandwidth? What minimum \\(f_s\\) do you need to see it whole in one capture (80% usable)?", items: [], items_en: [] },
+      { q: "למה רצפת הרעש ב-dBFS לכל bin יורדת ב-⁦3 dB⁩ כשמכפילים את \\(N\\), אבל רמה של טון נשארת? מה זה אומר כשמשווים שני צילומי מסך?",
+        q_en: "Why does the noise floor in dBFS per bin drop by 3 dB when \\(N\\) doubles, while a tone stays at the same level? What does this mean when you compare two screenshots?", items: [], items_en: [] },
+      { q: "בבית, בלי רדיו: הריצו sdr_spectrum_explorer, בחרו Preset של FM broadcast, לחצו על תחנה וצרפו צילום מסך עם המדידה.",
+        q_en: "At home, without a radio: run sdr_spectrum_explorer, choose the FM broadcast preset, click a station and attach a screenshot with the measurement.", items: [], items_en: [] },
+    ],
+
+    parts: [
+      {
+        title: "חלק 1 – חיבור ולכידה ראשונה (10 דק׳)", title_en: "Part 1 – Connect and first capture (10 min)",
+        goal: "מחברים את ה-Pluto, בודקים שהכול עובד ולוכדים מסגרת ראשונה – ומבינים מה יצא.", goal_en: "Connect the Pluto, check that everything works and capture a first frame – and understand what came out.",
+        steps: [
+          { do: "חברו את האנטנה ל-RX ואת הכבל לשקע ה-USB של ה-Pluto. חכו כ-20 שניות עד ש-LED1 מהבהב. בתיקיית קבצי המעבדה הריצו:", do_en: "Connect the antenna to RX and the cable to the Pluto's USB port. Wait about 20 s until LED1 blinks. In the lab files folder run:",
+            set: [["MATLAB", "sdr_setup_check", "sdr_setup_check"]],
+            q: ["באיזה מצב הרדיו – AD9363 או AD9364? מה טווח התדרים שלו?"], q_en: ["Which mode is the radio in – AD9363 or AD9364? What is its frequency range?"] },
+          { do: "פתחו את sdr_lab1_first_steps והריצו את סעיפים 1–4 אחד אחד. קראו את ההערות ליד כל פרמטר.", do_en: "Open sdr_lab1_first_steps and run sections 1–4 one at a time. Read the comment next to each parameter.",
+            set: [["fc", "99.0 MHz  (AD9363: 433.92 MHz)", "99.0 MHz (in AD9363: 433.92 MHz)"], ["fs · N · gain", "1.92 MSPS · 8192 · 30 dB", "1.92 MSPS · 8192 · 30 dB"]],
+            q: ["מה מדפיס disp(rx)? אילו פרמטרים נוספים יש לאובייקט?", "האם היה overflow?"], q_en: ["What does disp(rx) print? Which other parameters does the object have?", "Was there an overflow?"] },
+          { do: "הריצו את סעיף 5: I ו-Q בזמן, והיסטוגרמה של ערכי I.", do_en: "Run section 5: I and Q in time, and a histogram of the I values.",
+            q: ["מה שיא האות ב-dBFS? איזה חלק מהתחום של ה-ADC מנוצל?", "למה I ו-Q נראים כמו רעש ולא כמו גל סינוס?"], q_en: ["What is the signal peak in dBFS? How much of the ADC range is used?", "Why do I and Q look like noise rather than a sine wave?"] },
+          { do: "הריצו את סעיפים 6–8: ספקטרום \"ביד\" עם FFT, והמספרים שמתארים את הלכידה. בסוף הרדיו משתחרר.", do_en: "Run sections 6–8: a spectrum \"by hand\" with an FFT, and the numbers that describe the capture. At the end the radio is released.",
+            fig: [1], q: ["השוו את Span, ה-bin, ה-RBW וזמן הלכידה לחישוב בשאלת הכנה 1."], q_en: ["Compare the span, bin, RBW and capture time with your answer to preparation question 1."] },
+        ],
+      },
+      {
+        title: "חלק 2 – הפרמטרים והמגבלות (15 דק׳)", title_en: "Part 2 – The parameters and the limits (15 min)",
+        goal: "משנים פרמטר אחד בכל פעם ורואים מה הוא עושה: רוחב, רזולוציה, הגבר ו-DC spike.", goal_en: "Change one parameter at a time and see what it does: width, resolution, gain and the DC spike.",
+        diagram: "gui_station.png",
+        steps: [
+          { do: "פתחו את sdr_lab2_parameters. בסעיף Settings קבעו את fStation לתחנה החזקה מחלק 1, והריצו את סעיף A (קצב דגימה).", do_en: "Open sdr_lab2_parameters. In the Settings section set fStation to the strong station from Part 1, and run section A (sample rate).",
+            fig: [2], q: ["מה רוחב התמונה בכל אחד משלושת המקרים?", "מה קורה לאותות ליד הקצוות (מעבר לקו 0.4 fs)?"], q_en: ["How wide is the picture in each of the three cases?", "What happens to signals near the edges (beyond the 0.4 fs line)?"] },
+          { do: "הריצו את סעיף B (גודל FFT): אותן דגימות, שלושה ערכים של N.", do_en: "Run section B (FFT size): the same samples, three values of N.",
+            fig: [3], q: ["רשמו את ה-RBW ואת רצפת הרעש בכל N. בכמה dB ירדה הרצפה? השוו ל-\\(10\\log_{10}(N_2/N_1)\\).", "האם גובה התחנה השתנה באותה מידה? למה?"], q_en: ["Write down the RBW and the noise floor for each N. By how many dB did the floor drop? Compare with \\(10\\log_{10}(N_2/N_1)\\).", "Did the station's level change by the same amount? Why?"] },
+          { do: "הריצו את סעיף C (הגבר): סריקה של ההגבר מ-0 עד ⁦70 dB⁩.", do_en: "Run section C (gain): a sweep of the gain from 0 to 70 dB.",
+            fig: [4], q: ["מה ההגבר הטוב ביותר? באיזה הגבר ה-ADC נכנס לרוויה?", "מה קורה לרצפת הרעש ול-SNR מעל נקודת הרוויה? הסבירו."], q_en: ["What is the best gain? At which gain does the ADC saturate?", "What happens to the noise floor and the SNR above the saturation point? Explain."] },
+          { do: "הריצו את סעיף D (DC spike ו-offset tuning).", do_en: "Run section D (DC spike and offset tuning).",
+            fig: [5], q: ["איפה ה-DC spike בכל אחד מהמקרים? למה הוא לא אות אמיתי?", "חפשו העתק חלש של התחנה בצד השני של המרכז. מה זה, וכמה dB הוא מתחת לתחנה?"], q_en: ["Where is the DC spike in each case? Why is it not a real signal?", "Look for a weak copy of the station on the other side of the center. What is it, and how many dB below the station is it?"] },
+          { do: "פתחו את הממשק עם הרדיו ולחצו Run. הגדילו בהדרגה את קצב הדגימה והסתכלו על שורת הסטטוס.", do_en: "Open the GUI with the radio and press Run. Raise the sample rate step by step and watch the status line.",
+            set: [["MATLAB", "sdr_spectrum_explorer('Source','pluto')", "sdr_spectrum_explorer('Source','pluto')"]],
+            q: ["מאיזה קצב דגימה מופיעים overflows? מה המגבלה כאן – הרדיו או ה-USB?"], q_en: ["From which sample rate do overflows appear? What is the limit here – the radio or the USB?"] },
+        ],
+      },
+      {
+        title: "חלק 3 – רצועת ה-FM: לראות, למדוד ולהאזין (15 דק׳)", title_en: "Part 3 – The FM band: see, measure and listen (15 min)",
+        goal: "סורקים את כל רצועת ה-FM, מודדים רוחב סרט של תחנות, מאזינים לאחת ורואים מה יש בתוך אות ה-MPX.", goal_en: "Scan the whole FM band, measure the bandwidth of stations, listen to one and see what is inside the MPX signal.",
+        diagram: "gui_band.png",
+        steps: [
+          { do: "בממשק בחרו Preset \"FM broadcast ⁦87.5-108 MHz⁩ (sweep)\". סמנו Max hold ולחצו Sweep once שלוש פעמים.", do_en: "In the GUI choose the preset \"FM broadcast 87.5-108 MHz (sweep)\". Tick Max hold and press Sweep once three times.",
+            set: [["Sweep", "87.5–108 MHz · fs 4 MSPS · N 4096 · gain 30 dB", "87.5–108 MHz · fs 4 MSPS · N 4096 · gain 30 dB"]],
+            fig: [6], q: ["כמה תחנות רואים? מה המרווח הקטן ביותר בין שתי תחנות שכנות?", "כמה לכידות עשתה הסריקה? (שורת הסטטוס) השוו לשאלת הכנה 2."], q_en: ["How many stations do you see? What is the smallest spacing between two neighbouring stations?", "How many captures did the sweep take? (status line) Compare with preparation question 2."] },
+          { do: "לחצו על שלוש תחנות – חזקה, בינונית וחלשה – ורשמו בטבלה את הרוחב ב-‎-⁦26 dB⁩ וב-99%.", do_en: "Click three stations – strong, medium and weak – and write the -26 dB and 99% bandwidth in the table.",
+            table: true, q: ["השוו לכלל קרסון (שאלת הכנה 3). האם התחנות במונו או בסטריאו?", "למה התחנה החלשה נראית צרה יותר? (רמז: מה קורה לשוליים מתחת לרעש?)"], q_en: ["Compare with Carson's rule (preparation question 3). Are the stations mono or stereo?", "Why does the weak station look narrower? (Hint: what happens to the skirts below the noise?)"] },
+          { do: "לחצו על התחנה החזקה ואז על Listen FM at marker. אפשר גם מהשורה:", do_en: "Click the strong station, then Listen FM at marker. You can also use the command line:",
+            set: [["MATLAB", "sdr_fm_listen(99.0e6, 'Source', 'pluto')", "sdr_fm_listen(99.0e6, 'Source', 'pluto')"]],
+            fig: [7], q: ["מצאו באות ה-MPX את הפיילוט (⁦19 kHz⁩), את L−R (⁦23–53 kHz⁩) ואת ה-RDS (⁦57 kHz⁩). האם יש בכולם?", "מה קורה לאודיו כשמנסים תחנה חלשה מאוד?"], q_en: ["Find in the MPX signal the pilot (19 kHz), L−R (23–53 kHz) and RDS (57 kHz). Are they all there?", "What happens to the audio when you try a very weak station?"] },
+          { do: "חזרו ל-Preset \"FM - one station\", לחצו Run והסתכלו על ה-waterfall כ-30 שניות.", do_en: "Go back to the preset \"FM - one station\", press Run and watch the waterfall for about 30 seconds.",
+            q: ["האם רוחב התחנה קבוע? מה משנה אותו? (מוזיקה, דיבור, שקט)"], q_en: ["Is the station's width constant? What changes it? (music, speech, silence)"] },
+        ],
+      },
+      {
+        title: "חלק 4 – אנלוגי מול דיגיטלי (15 דק׳)", title_en: "Part 4 – Analog versus digital (15 min)",
+        goal: "מסתכלים על אותות דיגיטליים אמיתיים – סלולר, Wi-Fi ומטוסים – ומשווים את צורת הספקטרום שלהם לאותות האנלוגיים.", goal_en: "Look at real digital signals – cellular, Wi-Fi and aircraft – and compare their spectrum shape with the analog signals.",
+        diagram: "gui_adsb.png",
+        steps: [
+          { do: "בחרו Preset \"LTE band 3 downlink (sweep)\". לחצו על כל \"קוביה\" ומדדו את רוחב ה-99%.", do_en: "Choose the preset \"LTE band 3 downlink (sweep)\". Click each \"block\" and measure its 99% bandwidth.",
+            set: [["Sweep", "1800–1885 MHz · fs 20 MSPS · N 2048 · gain 55 dB", "1800–1885 MHz · fs 20 MSPS · N 2048 · gain 55 dB"]],
+            fig: [8], table: true, q: ["כמה ערוצים יש, ומה הרוחב של כל אחד? לאיזה רוחב תקני (5/10/15/⁦20 MHz⁩) הוא מתאים?", "השוו לשאלת הכנה 4. למה הצורה שטוחה והקצוות חדים?"], q_en: ["How many channels are there, and how wide is each? Which standard width (5/10/15/20 MHz) does it match?", "Compare with preparation question 4. Why is the shape flat with sharp edges?"] },
+          { do: "בחרו Preset \"Wi-Fi ⁦2.4 GHz⁩ (sweep)\", העבירו את Run mode ל-Repeated sweep ולחצו Run. חכו שה-waterfall יתמלא.", do_en: "Choose the preset \"Wi-Fi 2.4 GHz (sweep)\", set Run mode to Repeated sweep and press Run. Wait for the waterfall to fill.",
+            fig: [9], q: ["באילו ערוצים יש פעילות? מה רוחב ערוץ Wi-Fi?", "מה ההבדל בזמן בין Wi-Fi ל-LTE? (רמז: מי משדר רק כשיש מה לשלוח?)"], q_en: ["Which channels are active? How wide is a Wi-Fi channel?", "What is the difference in time between Wi-Fi and LTE? (Hint: who transmits only when there is something to send?)"] },
+          { do: "בחרו Preset \"ADS-B aircraft ⁦1090 MHz⁩\" ו-Lower plot = Time: envelope |x|. לחצו Single capture כמה פעמים עד שרואים פולסים. (אם אין מטוסים בסביבה – נסו ISM ⁦433.92 MHz⁩ ולחצו על שלט של שער/רכב.)", do_en: "Choose the preset \"ADS-B aircraft 1090 MHz\" and Lower plot = Time: envelope |x|. Press Single capture a few times until you see pulses. (If no aircraft are around – try ISM 433.92 MHz and press a gate/car remote.)",
+            fig: [10], q: ["מה משך הודעה אחת? מה רוחב הפולס? הגדילו (zoom) על הודעה אחת.", "איך נראה הספקטרום של פולסים קצרים, ולמה יש קו חזק באמצע?"], q_en: ["How long is one message? How wide is a pulse? Zoom in on one message.", "What does the spectrum of short pulses look like, and why is there a strong line in the middle?"] },
+          { do: "סכמו: מלאו בדוח טבלה שמשווה אנלוגי לדיגיטלי. בסוף סגרו את הממשק (הרדיו משתחרר) ונתקו.", do_en: "Summarize: fill in a table in the report that compares analog and digital. Then close the GUI (the radio is released) and unplug.",
+            q: ["לכל סוג אות: צורת הספקטרום, האם הרוחב תלוי בתוכן, האם יש קו נושא, האם הוא רציף או בפרצים, ואיזה מדד רוחב סרט מתאים לו."], q_en: ["For each type of signal: the spectrum shape, whether the width depends on the content, whether there is a carrier line, whether it is continuous or bursty, and which bandwidth measure suits it."] },
+        ],
+      },
+    ],
+
+    figRules: [
+      "כל איור ממוספר ועם כיתוב: מה רואים ובאילו הגדרות (fc, fs, N, הגבר).",
+      "צילומי מסך מהממשק נשמרים עם Save PNG; גרפים מהסקריפטים נשמרים אוטומטית כ-PNG.",
+      "כשמשווים כמה מצבים – אותו ציר Y (Y range בממשק).",
+      "סמנו על האיור את המדידה: הסמן, קווי הרוחב והערכים.",
+      "ליד כל איור: משפט אחד שמשווה לתאוריה, עם מספרים.",
+    ],
+    figRules_en: [
+      "Every figure is numbered and has a caption: what it shows and the settings (fc, fs, N, gain).",
+      "GUI screenshots are saved with Save PNG; script plots are saved automatically as PNG.",
+      "When comparing several cases – use the same Y axis (Y range in the GUI).",
+      "Show the measurement on the figure: the marker, the width lines and the values.",
+      "Next to every figure: one sentence that compares it with theory, with numbers.",
+    ],
+    figures: [
+      { n: 1, part: 1, kind: "graph", t: "הספקטרום הראשון \"ביד\"", t_en: "The first spectrum \"by hand\"",
+        set: "sdr_lab1_first_steps · section 6", show: "ציר תדר ב-MHz, ציר Y ב-dBFS, הקו של fc מסומן.", show_en: "Frequency axis in MHz, Y axis in dBFS, the fc line marked.",
+        check: "Span = \\(f_s\\), bin = \\(f_s/N\\). איפה ה-DC spike?", check_en: "Span = \\(f_s\\), bin = \\(f_s/N\\). Where is the DC spike?" },
+      { n: 2, part: 2, kind: "graph", t: "קצב דגימה = רוחב התמונה", t_en: "Sample rate = width of the picture",
+        set: "fig2_span.png", show: "שלושה ספקטרומים: 0.96, 4 ו-⁦20 MSPS⁩, עם קווי 0.4 fs.", show_en: "Three spectra: 0.96, 4 and 20 MSPS, with the 0.4 fs lines.",
+        check: "ה-Span שווה ל-\\(f_s\\). מה קורה מעבר ל-0.4 fs?", check_en: "The span equals \\(f_s\\). What happens beyond 0.4 fs?" },
+      { n: 3, part: 2, kind: "graph", t: "גודל FFT = רזולוציה", t_en: "FFT size = resolution",
+        set: "fig3_rbw.png", show: "שלושה ערכי N על אותו ציר, עם RBW ורצפה במקרא.", show_en: "Three values of N on one axis, with RBW and floor in the legend.",
+        check: "הרצפה יורדת \\(10\\log_{10}(N_2/N_1)\\) dB, ופסגת התחנה כמעט לא.", check_en: "The floor drops \\(10\\log_{10}(N_2/N_1)\\) dB, the station's peak hardly at all." },
+      { n: 4, part: 2, kind: "graph", t: "רמות ו-SNR כפונקציה של ההגבר", t_en: "Levels and SNR versus gain",
+        set: "fig4_gain.png", show: "שיא התחנה, רצפת הרעש ושיא ה-ADC, ו-SNR, עם ההגבר הטוב ביותר מסומן.", show_en: "Station peak, noise floor and ADC peak, and the SNR, with the best gain marked.",
+        check: "באיזה הגבר הרצפה מתחילה לעלות? מה הקשר לנקודה שבה שיא ה-ADC מגיע ל-⁦0 dBFS⁩?", check_en: "At which gain does the floor start to rise? How does it relate to where the ADC peak reaches 0 dBFS?" },
+      { n: 5, part: 2, kind: "graph", t: "DC spike ו-offset tuning", t_en: "DC spike and offset tuning",
+        set: "fig5_dc.png", show: "מכוון על התחנה מול מכוון ⁦400 kHz⁩ מתחת. סמנו את ה-spike ואת ה-image.", show_en: "Tuned on the station versus tuned 400 kHz below. Mark the spike and the image.",
+        check: "ה-image נמצא ב-\\(2f_c - f_{station}\\). כמה dBc?", check_en: "The image sits at \\(2f_c - f_{station}\\). How many dBc?" },
+      { n: 6, part: 3, kind: "gui", t: "כל רצועת ה-FM (Sweep + Max hold)", t_en: "The whole FM band (Sweep + Max hold)",
+        set: "87.5–108 MHz · 4 MSPS · N 4096", show: "כל התחנות, ומדידה על תחנה אחת.", show_en: "All the stations, and a measurement on one station.",
+        check: "מספר התחנות והמרווח המינימלי ביניהן.", check_en: "The number of stations and the minimum spacing between them." },
+      { n: 7, part: 3, kind: "graph", t: "מקלט FM: RF, MPX ואודיו", t_en: "FM receiver: RF, MPX and audio",
+        set: "sdr_fm_listen", show: "ארבעת החלונות. סמנו את הפיילוט, L−R ו-RDS.", show_en: "All four panels. Mark the pilot, L−R and RDS.",
+        check: "רוחב ה-99% של התחנה מול קרסון; תדרי הרכיבים מול 19/38/⁦57 kHz⁩.", check_en: "The station's 99% width versus Carson; the component frequencies versus 19/38/57 kHz." },
+      { n: 8, part: 4, kind: "gui", t: "ערוצי LTE ברצועה 3", t_en: "LTE channels in band 3",
+        set: "1800–1885 MHz · 20 MSPS · N 2048", show: "מדידת 99% על ערוץ אחד לפחות.", show_en: "A 99% measurement on at least one channel.",
+        check: "הרוחב מול \\(N_{sc}\\cdot 15\\) kHz של הרוחב התקני הקרוב.", check_en: "The width versus \\(N_{sc}\\cdot 15\\) kHz of the nearest standard width." },
+      { n: 9, part: 4, kind: "gui", t: "Wi-Fi ⁦2.4 GHz⁩ – waterfall של סריקות", t_en: "Wi-Fi 2.4 GHz – waterfall of sweeps",
+        set: "2400–2484 MHz · Repeated sweep", show: "ה-waterfall מלא, עם מדידת 99% על ערוץ פעיל.", show_en: "A full waterfall, with a 99% measurement on an active channel.",
+        check: "רוחב ערוץ מול ⁦16.25 MHz⁩, ופרצים בזמן לעומת LTE.", check_en: "Channel width versus 16.25 MHz, and bursts in time compared with LTE." },
+      { n: 10, part: 4, kind: "gui", t: "ADS-B (או שלט ⁦433 MHz⁩) בזמן", t_en: "ADS-B (or a 433 MHz remote) in time",
+        set: "1089 MHz · 4 MSPS · Time: envelope |x|", show: "הודעות בזמן, ו-zoom על הודעה אחת.", show_en: "Messages in time, and a zoom on one message.",
+        check: "משך הודעה (⁦~120 µs⁩) ורוחב פולס (⁦0.5 µs⁩) מול הספקטרום.", check_en: "Message length (~120 µs) and pulse width (0.5 µs) versus the spectrum." },
+    ],
+
+    tables: [
+      { id: "bw", title: "טבלה 1 – רוחב הסרט שמדדתם", title_en: "Table 1 – the bandwidth you measured",
+        lead: "מלאו מתוך המדידה בממשק. בעמודת 'צפוי' – לפי קרסון או לפי התקן. נשמר בדפדפן; אפשר להוריד כ-CSV.",
+        lead_en: "Fill in from the GUI measurement. In the 'expected' column – from Carson or from the standard. Saved in your browser; download as CSV.",
+        rowHead: ["אות", "Signal"],
+        cols: [["תדר [MHz]", "Freq [MHz]", "num"], ["-26 dB [kHz]", "-26 dB [kHz]", "num"], ["99% [kHz]", "99% [kHz]", "num"], ["צפוי [kHz]", "Expected [kHz]", "num"], ["הערות", "Notes", "text"]],
+        rows: [["FM – תחנה חזקה", "FM – strong station"], ["FM – תחנה בינונית", "FM – medium station"], ["FM – תחנה חלשה", "FM – weak station"],
+               ["LTE – ערוץ 1", "LTE – channel 1"], ["LTE – ערוץ 2", "LTE – channel 2"], ["LTE – ערוץ 3", "LTE – channel 3"],
+               ["Wi-Fi – ערוץ פעיל", "Wi-Fi – active channel"], ["ADS-B / 433 MHz", "ADS-B / 433 MHz"]] },
+    ],
+
+    report: {
+      lead: "הדוח הוא דוח מעבדה אקדמי: מי שלא היה במעבדה צריך להבין ממנו מה נבדק, איך נמדד, מה יצא ומה זה אומר. כותבים במילים שלכם, בעברית או באנגלית, ומגישים קובץ PDF אחד במודל של הקורס.",
+      lead_en: "The report is an academic lab report: someone who was not in the lab must be able to understand what was tested, how it was measured, what came out and what it means. Write in your own words, in Hebrew or English, and submit a single PDF file on the course Moodle.",
+      sections: [
+        ["עמוד שער", "שם המוסד והמחלקה, שם הקורס ומספרו, שם המעבדה, שמות המגישים ומספרי ת״ז, מספר קבוצה, תאריך הביצוע ותאריך ההגשה, ושם המרצה.",
+         "Title page", "Institution and department, course name and number, lab title, names and ID numbers of the authors, group number, date of the lab and of submission, and the lecturer's name."],
+        ["תקציר", "5–8 שורות: מה נבדק, באיזה ציוד, התוצאות העיקריות במספרים (למשל: רוחב 99% של תחנת FM נמדד ⁦160 kHz⁩ מול ⁦180 kHz⁩ לפי קרסון), ומסקנה אחת. כותבים אותו אחרון.",
+         "Abstract", "5–8 lines: what was tested, with which equipment, the main results with numbers (for example: the 99% width of an FM station was 160 kHz versus 180 kHz from Carson), and one conclusion. Write it last."],
+        ["מבוא ורקע תאורטי", "מטרות המעבדה, ורקע קצר במילים שלכם: מקלט SDR והאות המרוכב, ארבעת הפרמטרים והקשר ביניהם, הגדרות רוחב סרט, קרסון ו-OFDM. משוואות ממוספרות ומוזכרות בטקסט.",
+         "Introduction and background", "The goals, and a short background in your own words: the SDR receiver and the complex signal, the four parameters and how they relate, bandwidth definitions, Carson and OFDM. Equations numbered and referred to in the text."],
+        ["מערך הניסוי ושיטת המדידה", "הרדיו (דגם ומצב AD9363/AD9364), האנטנה, התוכנה, וההגדרות של כל מדידה (fc, fs, N, הגבר, ממוצעים). איך מדדתם רוחב סרט.",
+         "Setup and method", "The radio (model and AD9363/AD9364 mode), the antenna, the software, and the settings of every measurement (fc, fs, N, gain, averages). How you measured bandwidth."],
+        ["תוצאות", "לפי חלקים 1–4: איורים 1–10 עם כיתוב, טבלה 1, והתשובות לשאלות שמסומנות 'לדוח' ליד האיור המתאים.",
+         "Results", "Part by part: Figures 1–10 with captions, Table 1, and the answers to the questions marked 'for the report' next to the relevant figure."],
+        ["דיון", "השוואה למספרים התאורטיים (RBW, רצפה, קרסון, רוחב תקני) עם שגיאה באחוזים. מה הגביל אתכם: רעש, רוויה, DC spike, image, USB, דיוק תדר. טבלת השוואה אנלוגי מול דיגיטלי.",
+         "Discussion", "Compare with the theoretical numbers (RBW, floor, Carson, standard widths) with percent errors. What limited you: noise, saturation, DC spike, image, USB, frequency accuracy. A comparison table of analog versus digital."],
+        ["מסקנות", "4–6 נקודות קצרות: איך לבחור פרמטרים ל-SDR, ומה מבדיל ספקטרום של אות אנלוגי מדיגיטלי.",
+         "Conclusions", "4–6 short points: how to choose SDR parameters, and what tells an analog spectrum from a digital one."],
+        ["מקורות", "רשימה ממוספרת בסגנון IEEE. למשל: [1] Analog Devices, \"ADALM-PLUTO SDR Active Learning Module\", wiki.analog.com. ‏[2] MathWorks, \"Communications Toolbox Support Package for ADALM-Pluto Radio\". ‏[3] S. Haykin and M. Moher, <i>Introduction to Analog and Digital Communications</i>, 2nd ed. Wiley, 2007.",
+         "References", "A numbered list in IEEE style. For example: [1] Analog Devices, \"ADALM-PLUTO SDR Active Learning Module\", wiki.analog.com. [2] MathWorks, \"Communications Toolbox Support Package for ADALM-Pluto Radio\". [3] S. Haykin and M. Moher, <i>Introduction to Analog and Digital Communications</i>, 2nd ed. Wiley, 2007."],
+        ["נספחים", "קוד MATLAB שכתבתם או שיניתם, וקבצי הנתונים (CSV, I/Q). לא חלק ממגבלת העמודים.",
+         "Appendices", "MATLAB code you wrote or changed, and the data files (CSV, I/Q). Not counted in the page limit."],
+      ],
+      style: [
+        "עד 12 עמודים בלי הנספחים. גופן 12, ריווח 1.5, שוליים 2.5 ס״מ, מספרי עמודים.",
+        "איור – כיתוב מתחת לאיור. טבלה – כותרת מעל הטבלה.",
+        "כל מספר עם יחידות (MHz, kHz, dBFS, dB) ובדיוק סביר.",
+        "משוואות בעורך משוואות (Word או LaTeX), לא צילום של כתב יד.",
+        "כותבים בזמן עבר על מה שנעשה, ובזמן הווה על התאוריה.",
+        "כל מה שלקוח ממקור – עם הפניה. דוחות של קבוצות אחרות אינם מקור.",
+      ],
+      style_en: [
+        "Up to 12 pages without the appendices. 12 pt font, 1.5 line spacing, 2.5 cm margins, page numbers.",
+        "Figures – caption below the figure. Tables – title above the table.",
+        "Every number with units (MHz, kHz, dBFS, dB) and sensible precision.",
+        "Equations with an equation editor (Word or LaTeX), not a photo of handwriting.",
+        "Use the past tense for what you did and the present tense for theory.",
+        "Anything taken from a source needs a citation. Other groups' reports are not a source.",
+      ],
+      submit: [
+        ["ייצאו את הדוח ל-PDF: ב-Word – File → Save As → PDF; ב-Overleaf – Download PDF. לא מגישים docx או תמונות.", "Export the report to PDF: in Word – File → Save As → PDF; in Overleaf – Download PDF. Do not submit docx or images."],
+        ["תנו לקובץ שם לפי התבנית:", "Name the file using this pattern:", "Lab_SDR_<ID1>_<ID2>.pdf"],
+        ["פתחו את ה-PDF ובדקו: האיורים קריאים, העברית והנוסחאות תקינות, וכל העמודים שם.", "Open the PDF and check: the figures are readable, the text and equations render correctly, and every page is there."],
+        ["במודל של הקורס היכנסו למטלה \"דוח מעבדת SDR\", לחצו \"הוספת הגשה\", גררו את הקובץ ולחצו \"שמירת שינויים\". אם מופיע כפתור \"הגשה לבדיקה\" – לחצו גם עליו.", "On the course Moodle open the assignment \"SDR lab report\", click \"Add submission\", drag in the file and click \"Save changes\". If there is a \"Submit assignment\" button, click it too."],
+        ["ודאו שהסטטוס הוא \"הוגש לציון\". מגישים עד המועד שמופיע במטלה במודל.", "Make sure the status reads \"Submitted for grading\". Submit by the deadline shown in the Moodle assignment."],
+      ],
+      check: [
+        ["עמוד שער מלא, כולל ת״ז ומספר קבוצה", "Complete title page, including IDs and group number"],
+        ["תקציר עם התוצאות העיקריות במספרים", "Abstract with the main results in numbers"],
+        ["ההגדרות (fc, fs, N, הגבר) של כל מדידה", "The settings (fc, fs, N, gain) of every measurement"],
+        ["כל 10 האיורים, עם כיתוב, ומוזכרים בטקסט", "All 10 figures, with captions, referred to in the text"],
+        ["טבלה 1 מלאה, עם הערך הצפוי", "Table 1 complete, with the expected values"],
+        ["תשובות לכל השאלות שמסומנות 'לדוח'", "Answers to every question marked 'for the report'"],
+        ["טבלת השוואה אנלוגי מול דיגיטלי", "A comparison table of analog versus digital"],
+        ["דיון במגבלות ה-SDR ובשגיאות", "Discussion of the SDR limits and the errors"],
+        ["מסקנות ורשימת מקורות", "Conclusions and a reference list"],
+        ["קובץ PDF אחד בשם הנכון, הועלה למודל", "One PDF with the right name, uploaded to Moodle"],
+      ],
+    },
+
+    files: [
+      { file: "sdr_spectrum_lab.zip", d: "כל קבצי המעבדה בקובץ אחד – פרסו לתיקייה אחת ופתחו אותה ב-MATLAB.", d_en: "All the lab files in one archive – unzip into one folder and open it in MATLAB." },
+      { file: "sdr_setup_check.m", d: "לפני הכול: בודק את MATLAB, את חבילת התמיכה, את הרדיו ואת מצב ה-AD9363/AD9364.", d_en: "First of all: checks MATLAB, the support package, the radio and the AD9363/AD9364 mode." },
+      { file: "sdr_lab1_first_steps.m", d: "חלק 1: יצירת המקלט, לכידה ראשונה, I/Q בזמן וספקטרום \"ביד\".", d_en: "Part 1: creating the receiver, a first capture, I/Q in time and a spectrum \"by hand\"." },
+      { file: "sdr_lab2_parameters.m", d: "חלק 2: ארבעה ניסויים – קצב דגימה, גודל FFT, הגבר ו-DC spike. שומר את איורים 2–5.", d_en: "Part 2: four experiments – sample rate, FFT size, gain and DC spike. Saves Figures 2–5." },
+      { file: "sdr_spectrum_explorer.m", d: "הממשק: ספקטרום, waterfall, סריקה, Presets לכל רצועה, מדידת רוחב סרט, האזנה ל-FM ושמירה.", d_en: "The GUI: spectrum, waterfall, sweep, presets for each band, bandwidth measurement, FM listening and saving." },
+      { file: "sdr_fm_listen.m", d: "מקלט FM שלם: offset tuning, מסנן ערוץ, גלאי FM, אות MPX, de-emphasis ואודיו.", d_en: "A complete FM receiver: offset tuning, channel filter, FM discriminator, MPX, de-emphasis and audio." },
+      { file: "sdr_measure_bw.m", d: "מדידת רוחב סרט: ‎-3/-6/-20/-⁦26 dB⁩ ו-99% (ההגדרה של ITU).", d_en: "Bandwidth measurement: -3/-6/-20/-26 dB and 99% (the ITU definition)." },
+      { file: "sdr_psd.m", d: "ספקטרום ממוצע ב-dBFS לכל bin, עם חלון Hann, בלי Toolbox.", d_en: "Averaged spectrum in dBFS per bin, Hann window, no toolbox needed." },
+      { file: "sdr_source.m", d: "ממשק אחד לרדיו האמיתי ולסימולטור – אותה פקודה בשניהם.", d_en: "One interface for the real radio and the simulator – the same command for both." },
+      { file: "sdr_sim_band.m", d: "הסימולטור: FM, AM, PMR, ⁦433 MHz⁩, ADS-B, LTE, Wi-Fi ו-5G, עם רעש, ADC של 12 ביט, DC spike ו-image.", d_en: "The simulator: FM, AM, PMR, 433 MHz, ADS-B, LTE, Wi-Fi and 5G, with noise, a 12-bit ADC, DC spike and image." },
     ],
   },
 ];
