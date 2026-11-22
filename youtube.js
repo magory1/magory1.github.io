@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-22T01:13Z",
+ "updated": "2026-11-22T11:13Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -341,7 +341,7 @@ window.YT_SYNC = {
   },
   {
    "id": "G4ZznuSo6DM",
-   "title": "Lab 7- Antennas Laboratory 130833",
+   "title": "Lab 7 - Antennas Laboratory 130833",
    "dur": "42:26"
   },
   {
