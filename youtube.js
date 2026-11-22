@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-21T02:10Z",
+ "updated": "2026-11-22T01:13Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -262,6 +262,16 @@ window.YT_SYNC = {
   ],
   "PLd61vYISMuMc": [
    {
+    "id": "9cteNconjtI",
+    "title": "Electronic and Optical Communication 6",
+    "dur": "1:17:17"
+   },
+   {
+    "id": "xv5eVN25AdU",
+    "title": "Electronic and Optical Communication 5",
+    "dur": "1:01:49"
+   },
+   {
     "id": "xv5eVN25AdU",
     "title": "Electronic and Optical Communication 5",
     "dur": "1:01:49"
@@ -284,6 +294,11 @@ window.YT_SYNC = {
   ]
  },
  "latest": [
+  {
+   "id": "9cteNconjtI",
+   "title": "Electronic and Optical Communication 6",
+   "dur": "1:17:17"
+  },
   {
    "id": "xv5eVN25AdU",
    "title": "Electronic and Optical Communication 5",
@@ -326,7 +341,7 @@ window.YT_SYNC = {
   },
   {
    "id": "G4ZznuSo6DM",
-   "title": "Lab 7 - Antennas Laboratory 130833",
+   "title": "Lab 7- Antennas Laboratory 130833",
    "dur": "42:26"
   },
   {
@@ -338,11 +353,6 @@ window.YT_SYNC = {
    "id": "-WFdSuuxFyQ",
    "title": "Lab 5 - Antennas Laboratory 130833",
    "dur": "33:21"
-  },
-  {
-   "id": "0n0yl6kFnXw",
-   "title": "Lab 4 - Antennas Laboratory 130833",
-   "dur": "57:53"
   }
  ]
 };
