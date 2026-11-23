@@ -581,7 +581,7 @@
       ${GUIDE_LIST.length ? `<section class="block"><div class="wrap">
         <div class="section-head"><h2>${G().guides}</h2></div>
         <p class="muted" style="margin-top:-6px">${G().guidesLead}</p>
-        <div class="grid">${GUIDE_LIST.map(guideCard).join("")}</div>
+        <div class="grid">${GUIDE_LIST.map((g) => guideCard(g) + slidesCard(g)).join("")}</div>
       </div></section>` : ""}
       <section class="block"><div class="wrap">
         <div class="section-head"><h2>${t.sdrTitle}</h2><a href="${REPO}" target="_blank" rel="noopener">${t.allCode}</a></div>
@@ -693,6 +693,11 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
       <div class="code">${c ? `${T().course} ${esc(c.code)} · ` : ""}${esc(tr(g, "time"))}</div>
       <h3>${esc(tr(g, "title"))}</h3><div class="muted">${esc(tr(g, "summary"))}</div></a>`;
   };
+  // a guide's background slides (PDF), shown as a card right after the guide
+  const slidesCard = (g) => !g.slides ? "" : `<a class="card guide-card slides-card" href="${g.dir}/${g.slides.file}" target="_blank" rel="noopener">
+      <img loading="lazy" src="${g.dir}/${g.slides.cover}" alt="">
+      <div class="code">${EN ? "Slides" : "מצגת"} · ${g.slides.count} ${EN ? "slides · PDF" : "שקפים · PDF"}</div>
+      <h3>${EN ? "Background slides" : "מצגת רקע"}: ${esc(tr(g, "title"))}</h3><div class="muted">${esc(tr(g.slides, "note"))}</div></a>`;
   const figHtml = (g, f, cap = "") => f ? `<figure class="fig${f.endsWith(".svg") ? " diagram" : ""}"><a href="${g.dir}/${f}" target="_blank" rel="noopener"><img loading="lazy" src="${g.dir}/${f}" alt="${esc(cap)}"></a>${cap ? `<figcaption>${esc(cap)}</figcaption>` : ""}</figure>` : "";
   const simAM = () => { const g = G(); return `
     <div class="sim" data-sim="am">
@@ -748,6 +753,7 @@ python ${esc(l.file)} --pluto    # ADALM-Pluto (TX→RX cable + 30 dB attenuator
         <h1>${esc(tr(g, "title"))}</h1>
         <p class="muted">${esc(tr(g, "summary"))}</p>
         <div class="guide-meta">${c ? `<span>${gt.course} ${esc(c.code)}</span>` : ""}<span>${gt.minutes}: ${esc(tr(g, "time"))}</span>
+          ${g.slides ? `<a class="btn small" href="${g.dir}/${g.slides.file}" target="_blank" rel="noopener">${EN ? "Background slides (PDF)" : "מצגת רקע (PDF)"}</a>` : ""}
           <span class="progress"><span class="bar"><i data-o="bar"></i></span><span data-o="prog">${gt.progress(0, total)}</span> <button type="button" class="link" data-reset>${gt.reset}</button></span></div>
       </div>
       <div class="wrap guide" data-guide="${g.id}" data-total="${total}">
