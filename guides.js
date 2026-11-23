@@ -379,6 +379,250 @@ $$\hat m(t) = \tfrac12 m(t)\cos(2\pi\Delta f\, t)$$
     ],
   },
   {
+    id: "sdr-intro",
+    course: "comm-lab",
+    dir: "labs/sdr_spectrum",
+    title: "ניסוי מקדים: היכרות עם ה-SDR – מה רואים באוויר",
+    title_en: "Pre-lab: Meet the SDR – what you can see on the air",
+    summary: "החיבור הראשון ל-ADALM-Pluto: קובעים רק תדר מרכזי וקצב דגימה, רואים ספקטרום ו-waterfall, מודדים רוחב סרט של תחנות במישור הזמן והתדר, ומקליטים את השלט של הרכב – בלי לפענח.",
+    summary_en: "The first connection to the ADALM-Pluto: set only the center frequency and the sample rate, see a spectrum and a waterfall, measure the bandwidth of stations in time and frequency, and record a car remote – without decoding it.",
+    time: "שעה", time_en: "1 hour",
+    tags: ["sdr", "spectrum"],
+    goals: [
+      "להתחבר ל-SDR ולקבוע את שתי ההגדרות הבסיסיות: תדר מרכזי וקצב דגימה.",
+      "לקרוא ספקטרום ו-waterfall: איפה יש אות, האם הוא רציף או בפרצים, ובערך כמה הוא רחב.",
+      "להכיר את המפה: אילו שירותים נמצאים איפה בספקטרום, ומה מהם אפשר לפענח.",
+      "למדוד רוחב סרט של תחנות שונות (FM ועוד) ולצלם כל אחת במישור הזמן ובמישור התדר.",
+      "להקליט שלט של רכב או שער ולראות את הלחיצות – בלי לפענח ובלי לשדר.",
+    ],
+    goals_en: [
+      "Connect to the SDR and set the two basic settings: center frequency and sample rate.",
+      "Read a spectrum and a waterfall: where there is a signal, whether it is continuous or bursty, and roughly how wide it is.",
+      "Learn the map: which services sit where in the spectrum, and which of them can be decoded.",
+      "Measure the bandwidth of different stations (FM and more) and capture each one in the time and frequency domains.",
+      "Record a car or gate remote and see the presses – without decoding and without transmitting.",
+    ],
+    equipment: ["ADALM-Pluto עם אנטנה", "כבל micro-USB לנתונים", "מחשב עם MATLAB וחבילת התמיכה ל-ADALM-Pluto", "שלט של רכב או של שער (שלכם)"],
+    equipment_en: ["ADALM-Pluto with an antenna", "micro-USB data cable", "Computer with MATLAB and the ADALM-Pluto support package", "A car or gate remote (your own)"],
+    prepNote: "הכול בקובץ אחד: <code dir='ltr'>sdr_intro.m</code>. בבית אפשר להריץ אותו <b>בלי רדיו</b> – משנים בשורה הראשונה ל-<code dir='ltr'>USE_PLUTO = false</code> ורואים סימולציה של אותו מסך.",
+    prepNote_en: "Everything is in one file: <code>sdr_intro.m</code>. At home you can run it <b>without a radio</b> – change the first line to <code>USE_PLUTO = false</code> and you see a simulation of the same screen.",
+
+    theory: [
+      {
+        h: "SDR בשני מספרים", h_en: "An SDR in two numbers",
+        fig: "pluto_rx.svg",
+        body: String.raw`<p><b>SDR</b> (Software Defined Radio) הוא מקלט שהחומרה שלו רק קולטת ודוגמת את האות – וכל השאר נעשה במחשב. בניסוי הזה קובעים רק שני מספרים:</p>
+<ul><li><b>תדר מרכזי \(f_c\)</b> – איפה מסתכלים. זה אמצע המסך.</li>
+<li><b>קצב דגימה \(f_s\)</b> – כמה רחב מסתכלים. המסך מראה בדיוק \(f_s\).</li></ul>
+$$f_c - \tfrac{f_s}{2} \quad \longrightarrow \quad f_c + \tfrac{f_s}{2}$$
+<p>דוגמה: \(f_c\) = ⁦433.5 MHz⁩ ו-\(f_s\) = ⁦2 MSPS⁩ ← רואים מ-⁦432.5⁩ עד ⁦434.5 MHz⁩. את ההגבר הרדיו קובע לבד (AGC), אז בינתיים לא צריך לחשוב עליו.</p>
+<p class="note">קו קבוע בדיוק באמצע המסך הוא של הרדיו עצמו (DC), לא אות מהאוויר. לכן מכוונים קצת לצד של מה שרוצים לראות.</p>`,
+        body_en: String.raw`<p>An <b>SDR</b> (Software Defined Radio) is a receiver whose hardware only picks up and samples the signal – everything else happens in the computer. In this pre-lab you set only two numbers:</p>
+<ul><li><b>Center frequency \(f_c\)</b> – where you look. It is the middle of the screen.</li>
+<li><b>Sample rate \(f_s\)</b> – how wide you look. The screen shows exactly \(f_s\).</li></ul>
+$$f_c - \tfrac{f_s}{2} \quad \longrightarrow \quad f_c + \tfrac{f_s}{2}$$
+<p>Example: \(f_c\) = 433.5 MHz and \(f_s\) = 2 MSPS → you see 432.5 to 434.5 MHz. The radio sets the gain by itself (AGC), so you don't need to think about it yet.</p>
+<p class="note">A fixed line exactly in the middle of the screen belongs to the radio itself (DC), not to the air. That is why you tune a little to the side of what you want to see.</p>`,
+      },
+      {
+        h: "איך קוראים את המסך", h_en: "How to read the screen",
+        fig: "intro_live.png",
+        body: String.raw`<p><b>למעלה – ספקטרום:</b> עוצמה כפונקציה של תדר, ברגע הזה. "גבעה" = אות. ככל שהיא רחבה יותר, האות תופס יותר רוחב סרט.</p>
+<p><b>למטה – waterfall:</b> כל שורה היא רגע אחד, החדש למעלה, והצבע הוא העוצמה. אות רציף (רדיו, סלולר) הוא פס אנכי קבוע. אות בפרצים (שלט, Wi-Fi) מופיע כמקפים קצרים שבאים והולכים.</p>
+<p>באיור (סימולציה): השלט ב-⁦433.92 MHz⁩ בזמן לחיצה, הקו של הרדיו באמצע (⁦433.5 MHz⁩), והעתק חלש שלו בצד השני (image).</p>`,
+        body_en: String.raw`<p><b>Top – spectrum:</b> power versus frequency, right now. A "hill" = a signal. The wider it is, the more bandwidth the signal takes.</p>
+<p><b>Bottom – waterfall:</b> each row is one moment, newest on top, and the color is the power. A continuous signal (radio, cellular) is a steady vertical stripe. A bursty signal (a remote, Wi-Fi) appears as short dashes that come and go.</p>
+<p>In the figure (simulation): the remote at 433.92 MHz while pressed, the radio's own line in the middle (433.5 MHz), and a weak copy of the remote on the other side (the image).</p>`,
+      },
+      {
+        h: "רוחב סרט, במישור הזמן ובמישור התדר", h_en: "Bandwidth, in the time and frequency domains",
+        fig: "intro_station.png",
+        body: String.raw`<p>סעיף 4 בסקריפט מצלם תחנה אחת בשני מישורים ומודד את רוחב הסרט שלה:</p>
+<ul><li><b>במישור הזמן</b> (למעלה): I, ‏Q ו-\(|x|\). מכוונים ⁦300 kHz⁩ מתחת לתחנה, ולכן I ו-Q מסתובבים ב-⁦300 kHz⁩. ב-FM המשרעת \(|x|\) כמעט קבועה – המידע נמצא בתדר ולא בעוצמה.</li>
+<li><b>במישור התדר</b> (למטה): הספקטרום, ועליו שני מדדים לרוחב הסרט: <b>‎-26 dB</b> – הרוחב שבו הספקטרום יורד ⁦26 dB⁩ מתחת לשיא (אדום), ו-<b>99%</b> – הרצועה שמכילה 99% מההספק (ירוק).</li></ul>
+<p>לתחנת FM מצפים לרוחב לפי כלל קרסון:</p>
+$$B \approx 2(\Delta f + W) = 2(75 + 15) = 180\ \text{kHz}$$
+<p>בפועל רואים בדרך כלל ⁦150–200 kHz⁩, וזה משתנה עם התוכן. למכשיר קשר PMR446: \(\Delta f\) = ⁦2.5 kHz⁩, \(W\) = ⁦3 kHz⁩ ← בערך ⁦11 kHz⁩.</p>`,
+        body_en: String.raw`<p>Section 4 of the script captures one station in two domains and measures its bandwidth:</p>
+<ul><li><b>Time domain</b> (top): I, Q and \(|x|\). We tune 300 kHz below the station, so I and Q rotate at 300 kHz. In FM the amplitude \(|x|\) is almost constant – the information is in the frequency, not the strength.</li>
+<li><b>Frequency domain</b> (bottom): the spectrum, with two measures of bandwidth: <b>-26 dB</b> – the width where the spectrum drops 26 dB below its peak (red), and <b>99%</b> – the band that holds 99% of the power (green).</li></ul>
+<p>For an FM station, Carson's rule predicts:</p>
+$$B \approx 2(\Delta f + W) = 2(75 + 15) = 180\ \text{kHz}$$
+<p>In practice you usually see 150–200 kHz, and it changes with the content. A PMR446 radio: \(\Delta f\) = 2.5 kHz, \(W\) = 3 kHz → about 11 kHz.</p>`,
+      },
+      {
+        h: "מה יש באוויר – ומה אפשר לפענח", h_en: "What is on the air – and what can be decoded",
+        fig: "band_map.png",
+        body: String.raw`<ul>
+<li><b>שידורי FM</b> (⁦87.5–108 MHz⁩) – אנלוגי, פתוח: אפשר להאזין. דורש רדיו במצב AD9364.</li>
+<li><b>תעופה AM</b> (⁦118–137 MHz⁩) ו-<b>PMR446</b> (⁦446 MHz⁩) – דיבור אנלוגי, פתוח.</li>
+<li><b>שלטים</b> (⁦433.92 MHz⁩) – דיגיטלי, בפרצים קצרים. משתמשים בקוד מתגלגל (rolling code): <b>רק רואים ומקליטים</b>.</li>
+<li><b>ADS-B</b> (⁦1090 MHz⁩) – מטוסים משדרים מיקום, דיגיטלי ופתוח: אפשר לפענח בתוכנה.</li>
+<li><b>סלולר (LTE/5G)</b> ו-<b>Wi-Fi</b> (⁦2.4 GHz⁩) – דיגיטלי ומוצפן: רואים את הצורה בלבד.</li>
+</ul>
+<p class="note">קליטה מותרת בכל תדר. משדרים רק עם רישיון – ובמעבדה הזאת לא משדרים בכלל.</p>`,
+        body_en: String.raw`<ul>
+<li><b>FM broadcast</b> (87.5–108 MHz) – analog, open: you can listen. Needs the radio in AD9364 mode.</li>
+<li><b>Airband AM</b> (118–137 MHz) and <b>PMR446</b> (446 MHz) – analog voice, open.</li>
+<li><b>Remotes</b> (433.92 MHz) – digital, short bursts. They use a rolling code: <b>look and record only</b>.</li>
+<li><b>ADS-B</b> (1090 MHz) – aircraft broadcast their position, digital and open: it can be decoded in software.</li>
+<li><b>Cellular (LTE/5G)</b> and <b>Wi-Fi</b> (2.4 GHz) – digital and encrypted: you see the shape only.</li>
+</ul>
+<p class="note">Receiving is allowed on any frequency. Transmitting needs a license – and in this lab we do not transmit at all.</p>`,
+      },
+    ],
+
+    components: [
+      { name: "ADALM-Pluto", name_en: "ADALM-Pluto", model: "325 MHz – 3.8 GHz (AD9363)", parts: "1–3",
+        role: "הרדיו. מחברים אנטנה לשקע RX ואת הכבל לשקע ה-USB.", role_en: "The radio. Antenna to the RX connector, cable to the USB port.",
+        ports: [["RX", "אנטנה", "antenna"], ["USB", "למחשב (השקע עם סמל ה-USB)", "to the computer (the port with the USB symbol)"]],
+        tip: "TX לא מחובר. במעבדה הזאת לא משדרים.", tip_en: "TX stays unconnected. We do not transmit in this lab." },
+      { name: "שלט של רכב או שער", name_en: "Car or gate remote", model: "433.92 MHz", parts: "3",
+        role: "מקור אות שאתם שולטים בו: כל לחיצה היא פרץ קצר של שידור.", role_en: "A signal source you control: every press is a short burst of transmission.",
+        ports: [], tip: "רק השלט שלכם, ורק מקליטים. לא משדרים חזרה אות שהוקלט.", tip_en: "Only your own remote, and only record. Never transmit a recorded signal back." },
+    ],
+
+    instruments: [
+      { h: "הרצה לפי סעיפים", h_en: "Running section by section",
+        body: "הקובץ sdr_intro.m מחולק לסעיפים שמתחילים ב-%%. עומדים בתוך סעיף ולוחצים Ctrl+Enter (ב-Mac: Cmd+Enter). כדי להסתכל על תדר אחר: משנים את fc בסעיף 1 ומריצים שוב את סעיפים 1–3.",
+        body_en: "The file sdr_intro.m is split into sections that start with %%. Put the cursor inside a section and press Ctrl+Enter (Mac: Cmd+Enter). To look at another frequency: change fc in section 1 and run sections 1–3 again." },
+      { h: "אם משהו לא עובד", h_en: "If something does not work",
+        body: "'No devices found': בדקו שהכבל בשקע הנכון ושהנורית LED1 מהבהבת, או הריצו sdr_setup_check. 'Radio busy': הריצו release(rx). תדר מתחת ל-325 MHz לא עובד: הרדיו במצב AD9363 – זה תקין לניסוי הזה.",
+        body_en: "'No devices found': check the cable is in the right port and LED1 blinks, or run sdr_setup_check. 'Radio busy': run release(rx). A frequency below 325 MHz fails: the radio is in AD9363 mode – that is fine for this pre-lab." },
+    ],
+
+    prep: [
+      { q: "המקלט מכוון ל-\\(f_c\\) = 433.5 MHz עם \\(f_s\\) = 2 MSPS. איזה תחום תדרים רואים? האם שלט ב-433.92 MHz יופיע על המסך, ובאיזה צד של המרכז?",
+        q_en: "The receiver is tuned to \\(f_c\\) = 433.5 MHz with \\(f_s\\) = 2 MSPS. Which frequency range do you see? Will a remote at 433.92 MHz appear, and on which side of the center?", items: [], items_en: [] },
+      { q: "רוצים לראות את כל רצועת ה-Wi-Fi, 2400–2483.5 MHz, בתמונה אחת. איזה \\(f_c\\) ואיזה \\(f_s\\) מינימלי צריך?",
+        q_en: "You want to see the whole Wi-Fi band, 2400–2483.5 MHz, in one picture. Which \\(f_c\\) and which minimum \\(f_s\\) do you need?", items: [], items_en: [] },
+      { q: "לפי כלל קרסון, מה רוחב הסרט הצפוי של תחנת FM (\\(\\Delta f\\) = 75 kHz, \\(W\\) = 15 kHz) ושל מכשיר קשר PMR446 (\\(\\Delta f\\) = 2.5 kHz, \\(W\\) = 3 kHz)?",
+        q_en: "Using Carson's rule, what bandwidth do you expect for an FM station (\\(\\Delta f\\) = 75 kHz, \\(W\\) = 15 kHz) and for a PMR446 radio (\\(\\Delta f\\) = 2.5 kHz, \\(W\\) = 3 kHz)?", items: [], items_en: [] },
+      { q: "לפי המפה למעלה: לאילו שירותים אפשר להאזין או לפענח, ואילו אפשר רק לראות? למה?",
+        q_en: "Using the map above: which services can you listen to or decode, and which can you only see? Why?", items: [], items_en: [] },
+    ],
+
+    parts: [
+      {
+        title: "חלק 1 – חיבור (5 דק׳)", title_en: "Part 1 – Connect (5 min)",
+        goal: "מחברים את הרדיו וקובעים את שני המספרים.", goal_en: "Connect the radio and set the two numbers.",
+        steps: [
+          { do: "חברו אנטנה ל-RX ואת הכבל ל-USB. חכו כ-20 שניות עד ש-LED1 מהבהב.", do_en: "Connect the antenna to RX and the cable to USB. Wait about 20 s until LED1 blinks." },
+          { do: "פתחו את sdr_intro.m והריצו את סעיפים 1 ו-2.", do_en: "Open sdr_intro.m and run sections 1 and 2.",
+            set: [["fc", "433.5 MHz", "433.5 MHz"], ["fs", "2 MSPS", "2 MSPS"]],
+            q: ["איזה תחום תדרים MATLAB הדפיס? האם הוא מתאים לחישוב בשאלת הכנה 1?"], q_en: ["Which frequency range did MATLAB print? Does it match your answer to preparation question 1?"] },
+        ],
+      },
+      {
+        title: "חלק 2 – מסתכלים על האוויר (15 דק׳)", title_en: "Part 2 – Look at the air (15 min)",
+        goal: "משנים רק את fc (ולפעמים את fs) ומגלים מה יש בכל מקום.", goal_en: "Change only fc (and sometimes fs) and find out what is in each place.",
+        steps: [
+          { do: "הריצו את סעיף 3 (30 שניות של ספקטרום ו-waterfall חיים). מה רואים ב-⁦433.5 MHz⁩ כשאף אחד לא לוחץ על שלט?", do_en: "Run section 3 (30 seconds of live spectrum and waterfall). What do you see at 433.5 MHz when nobody presses a remote?",
+            q: ["מצאו את הקו של הרדיו באמצע המסך. איך יודעים שהוא לא אות מהאוויר?"], q_en: ["Find the radio's line in the middle of the screen. How do you know it is not a signal from the air?"] },
+          { do: "עברו בין התדרים: בכל פעם שנו את fc ו-fs בסעיף 1 והריצו שוב את סעיפים 1–3. האיור נשמר לבד כ-live_<fc>MHz.png.", do_en: "Go through the frequencies: each time change fc and fs in section 1 and run sections 1–3 again. The figure is saved by itself as live_<fc>MHz.png.",
+            set: [["PMR446", "fc 446.1 MHz · fs 1 MSPS", "fc 446.1 MHz · fs 1 MSPS"], ["ADS-B", "fc 1089 MHz · fs 4 MSPS", "fc 1089 MHz · fs 4 MSPS"], ["LTE", "fc 1842 MHz · fs 20 MSPS", "fc 1842 MHz · fs 20 MSPS"], ["Wi-Fi", "fc 2437 MHz · fs 20 MSPS", "fc 2437 MHz · fs 20 MSPS"]],
+            fig: [1, 2],
+            q: ["באיזה תדר יש אות רציף, ובאיזה אות בפרצים?", "בערך כמה רחב כל אות? (קראו מציר התדר)"], q_en: ["Where is there a continuous signal, and where a bursty one?", "Roughly how wide is each signal? (read it from the frequency axis)"] },
+        ],
+      },
+      {
+        title: "חלק 3 – רוחב סרט של תחנות: זמן ותדר (15 דק׳)", title_en: "Part 3 – Bandwidth of stations: time and frequency (15 min)",
+        goal: "מצלמים שלוש תחנות במישור הזמן ובמישור התדר ומודדים את רוחב הסרט של כל אחת.", goal_en: "Capture three stations in the time and frequency domains and measure the bandwidth of each one.",
+        diagram: "intro_station.png",
+        steps: [
+          { do: "בסעיף 4 קבעו את fStation לתחנת FM חזקה והריצו אותו. האיור נשמר לבד כ-station_<f>MHz.png, והמדידה מודפסת.", do_en: "In section 4 set fStation to a strong FM station and run it. The figure is saved by itself as station_<f>MHz.png, and the measurement is printed.",
+            set: [["fStation", "FM: ⁦87.5–108 MHz⁩ (AD9364) · אחרת PMR446: ⁦446.05625 MHz⁩", "FM: 87.5–108 MHz (AD9364) · else PMR446: 446.05625 MHz"]],
+            fig: [3], table: true,
+            q: ["מה רואים במישור הזמן? למה \\(|x|\\) כמעט קבוע?", "מה רוחב הסרט ב-‎-⁦26 dB⁩ וב-99%? השוו לקרסון (שאלת הכנה 3)."], q_en: ["What do you see in the time domain? Why is \\(|x|\\) almost constant?", "What is the -26 dB and the 99% bandwidth? Compare with Carson (preparation question 3)."] },
+          { do: "חזרו על סעיף 4 עם עוד שתי תחנות: אחת חלשה, ואחת מסוג אחר (למשל PMR446 או תחנת FM נוספת).", do_en: "Repeat section 4 with two more stations: a weak one, and one of another kind (for example PMR446 or another FM station).",
+            fig: [4, 5], table: true,
+            q: ["למה תחנה חלשה נראית צרה יותר?", "במה שונה ה-PMR446 מתחנת FM, בזמן ובתדר?"], q_en: ["Why does a weak station look narrower?", "How does PMR446 differ from an FM station, in time and in frequency?"] },
+        ],
+      },
+      {
+        title: "חלק 4 – מקליטים שלט (15 דק׳)", title_en: "Part 4 – Record a remote (15 min)",
+        goal: "רואים את השלט באוויר, מקליטים שלוש שניות ומסתכלים על הלחיצות. לא מפענחים ולא משדרים.", goal_en: "See the remote on the air, record three seconds and look at the presses. No decoding, no transmitting.",
+        steps: [
+          { do: "החזירו את fc ל-⁦433.5 MHz⁩ והריצו את סעיפים 1–3. בזמן שהמסך רץ, לחצו על השלט ליד האנטנה.", do_en: "Set fc back to 433.5 MHz and run sections 1–3. While the screen runs, press the remote near the antenna.",
+            fig: [6], q: ["באיזה תדר מופיע השלט? (אם לא רואים כלום – אולי השלט ב-315 או ב-⁦868 MHz⁩: נסו)", "איך נראית לחיצה ב-waterfall?"], q_en: ["At which frequency does the remote appear? (If you see nothing – the remote may be at 315 or 868 MHz: try)", "What does a press look like in the waterfall?"] },
+          { do: "הריצו את סעיף 5: לחצו Enter ואז לחצו על השלט פעם או פעמיים במשך 3 השניות. ההקלטה נשמרת ב-my_recording.mat.", do_en: "Run section 5: press Enter, then press the remote once or twice during the 3 seconds. The recording is saved to my_recording.mat." },
+          { do: "הריצו את סעיף 6 והסתכלו על ההקלטה. הגדילו (zoom) על לחיצה אחת. האיור נשמר כ-remote_recording.png.", do_en: "Run section 6 and look at the recording. Zoom in on one press. The figure is saved as remote_recording.png.",
+            fig: [7], q: ["כמה זמן נמשכת לחיצה? כמה פעמים חוזר בה אותו \"מקטע\"?", "השלט משנה את הקוד בכל לחיצה (rolling code). למה זה מונע ממישהו להקליט ולשדר חזרה?"], q_en: ["How long does a press last? How many times does the same \"burst\" repeat inside it?", "The remote changes its code with every press (rolling code). Why does that stop someone from recording and transmitting it back?"] },
+          { do: "הריצו את סעיף 7 – שחרור הרדיו. סיימתם.", do_en: "Run section 7 – release the radio. Done." },
+        ],
+      },
+    ],
+
+    figRules: ["כל איור ממוספר ועם כיתוב: מה רואים, ובאיזה fc ו-fs.", "הסקריפט שומר את האיורים כ-PNG בתיקייה שלכם – משתמשים בהם כמו שהם.", "ליד כל איור: משפט אחד עם מספר (תדר, רוחב, משך)."],
+    figRules_en: ["Every figure is numbered and has a caption: what it shows, and at which fc and fs.", "The script saves the figures as PNG in your folder – use them as they are.", "Next to every figure: one sentence with a number (frequency, width, duration)."],
+    figures: [
+      { n: 1, part: 2, kind: "graph", t: "אות רציף", t_en: "A continuous signal", set: "LTE · fc 1842 MHz · fs 20 MSPS",
+        show: "ספקטרום ו-waterfall עם פס קבוע.", show_en: "Spectrum and waterfall with a steady stripe.", check: "רוחב משוער של האות.", check_en: "The approximate width of the signal." },
+      { n: 2, part: 2, kind: "graph", t: "אות בפרצים", t_en: "A bursty signal", set: "Wi-Fi 2437 MHz / ADS-B 1089 MHz",
+        show: "waterfall עם מקפים קצרים.", show_en: "A waterfall with short dashes.", check: "מה ההבדל מאיור 1?", check_en: "How does it differ from Figure 1?" },
+      { n: 3, part: 3, kind: "graph", t: "תחנה 1 – זמן ותדר", t_en: "Station 1 – time and frequency", set: "sdr_intro · section 4",
+        show: "I, Q ו-|x| בזמן; ספקטרום עם רוחב ‎-⁦26 dB⁩ ו-99%.", show_en: "I, Q and |x| in time; spectrum with the -26 dB and 99% widths.", check: "הרוחב מול קרסון.", check_en: "The width versus Carson." },
+      { n: 4, part: 3, kind: "graph", t: "תחנה 2 (חלשה) – זמן ותדר", t_en: "Station 2 (weak) – time and frequency", set: "sdr_intro · section 4",
+        show: "כמו איור 3.", show_en: "As in Figure 3.", check: "למה הרוחב שנמדד קטן יותר?", check_en: "Why is the measured width smaller?" },
+      { n: 5, part: 3, kind: "graph", t: "תחנה 3 (סוג אחר) – זמן ותדר", t_en: "Station 3 (another kind) – time and frequency", set: "sdr_intro · section 4",
+        show: "כמו איור 3.", show_en: "As in Figure 3.", check: "ההבדל מ-FM בזמן ובתדר.", check_en: "The difference from FM in time and frequency." },
+      { n: 6, part: 4, kind: "graph", t: "השלט בזמן לחיצה", t_en: "The remote while pressed", set: "fc 433.5 MHz · fs 2 MSPS",
+        show: "השלט ב-⁦433.92 MHz⁩ והקו של הרדיו באמצע.", show_en: "The remote at 433.92 MHz and the radio's line in the middle.", check: "תדר השלט מול הצפוי.", check_en: "The remote's frequency versus the expected one." },
+      { n: 7, part: 4, kind: "graph", t: "הקלטת השלט", t_en: "The remote recording", set: "sdr_intro · section 6",
+        show: "תדר מול זמן, ועוצמה מול זמן.", show_en: "Frequency versus time, and strength versus time.", check: "משך לחיצה ומספר החזרות.", check_en: "Press length and number of repeats." },
+    ],
+
+    tables: [
+      { id: "map", title: "טבלה 1 – מה מצאתם באוויר", title_en: "Table 1 – what you found on the air",
+        lead: "שורה לכל תדר שבדקתם בחלק 2. נשמר בדפדפן; אפשר להוריד כ-CSV.", lead_en: "One row per frequency you checked in Part 2. Saved in your browser; download as CSV.",
+        rowHead: ["שירות", "Service"],
+        cols: [["fc [MHz]", "fc [MHz]", "num"], ["fs [MSPS]", "fs [MSPS]", "num"], ["רציף / בפרצים", "Continuous / bursty", "text"], ["רוחב משוער [kHz]", "Approx. width [kHz]", "num"], ["אפשר לפענח?", "Decodable?", "text"]],
+        rows: [["שלט 433.92", "Remote 433.92"], ["PMR446", "PMR446"], ["ADS-B", "ADS-B"], ["LTE", "LTE"], ["Wi-Fi", "Wi-Fi"]] },
+      { id: "bw", title: "טבלה 2 – רוחב הסרט של התחנות", title_en: "Table 2 – the bandwidth of the stations",
+        lead: "מהמדידה של סעיף 4. בעמודת 'צפוי' – לפי קרסון.", lead_en: "From the section 4 measurement. In the 'expected' column – from Carson.",
+        rowHead: ["תחנה", "Station"],
+        cols: [["תדר [MHz]", "Freq [MHz]", "num"], ["סוג", "Type", "text"], ["-26 dB [kHz]", "-26 dB [kHz]", "num"], ["99% [kHz]", "99% [kHz]", "num"], ["צפוי [kHz]", "Expected [kHz]", "num"], ["SNR [dB]", "SNR [dB]", "num"]],
+        rows: [["תחנה 1", "Station 1"], ["תחנה 2 (חלשה)", "Station 2 (weak)"], ["תחנה 3 (סוג אחר)", "Station 3 (another kind)"]] },
+    ],
+
+    report: {
+      lead: "דוח מסודר וקצר: מי שלא היה במעבדה צריך להבין ממנו מה עשיתם, מה ראיתם ומה זה אומר. קובץ PDF אחד במודל.",
+      lead_en: "A short, organized report: someone who was not in the lab must understand what you did, what you saw and what it means. One PDF on Moodle.",
+      sections: [
+        ["עמוד שער", "שם הקורס, שם הניסוי, שמות ומספרי ת״ז, מספר קבוצה ותאריך.", "Title page", "Course, experiment name, names and ID numbers, group number and date."],
+        ["מבוא ורקע", "חצי עמוד במילים שלכם: מה זה SDR, מה קובעים fc ו-fs, ומה מודדים רוחב סרט (‎-⁦26 dB⁩, ‏99%, קרסון).", "Introduction and background", "Half a page in your own words: what an SDR is, what fc and fs set, and how bandwidth is measured (-26 dB, 99%, Carson)."],
+        ["מערך ושיטה", "הציוד, והגדרות כל מדידה (fc, ‏fs) בטבלה קטנה.", "Setup and method", "The equipment, and the settings of every measurement (fc, fs) in a small table."],
+        ["תוצאות", "לפי החלקים: איורים 1–7 עם כיתוב, טבלאות 1 ו-2, והתשובות לשאלות שמסומנות 'לדוח'.", "Results", "Part by part: Figures 1–7 with captions, Tables 1 and 2, and the answers to the questions marked 'for the report'."],
+        ["דיון", "רוחב הסרט שמדדתם מול קרסון, באחוזים. מה ההבדל בין רציף לפרצים, ובין FM ל-PMR במישור הזמן והתדר. מה אפשר לפענח ומה לא – ולמה.", "Discussion", "Your measured bandwidth versus Carson, in percent. The difference between continuous and bursty, and between FM and PMR in time and frequency. What can and cannot be decoded – and why."],
+        ["מסקנות", "3–5 נקודות קצרות.", "Conclusions", "3–5 short points."],
+        ["מקורות", "בסגנון IEEE, למשל: [1] Analog Devices, \"ADALM-PLUTO SDR Active Learning Module\". ‏[2] MathWorks, \"Communications Toolbox Support Package for ADALM-Pluto Radio\".", "References", "IEEE style, for example: [1] Analog Devices, \"ADALM-PLUTO SDR Active Learning Module\". [2] MathWorks, \"Communications Toolbox Support Package for ADALM-Pluto Radio\"."],
+      ],
+      style: ["עד 6 עמודים.", "איור – כיתוב מתחת; טבלה – כותרת מעל.", "כל מספר עם יחידות (MHz, kHz, dB).", "כותבים במילים שלכם; כל מקור עם הפניה."],
+      style_en: ["Up to 6 pages.", "Figures – caption below; tables – title above.", "Every number with units (MHz, kHz, dB).", "Write in your own words; cite every source."],
+      submit: [
+        ["ייצאו ל-PDF (ב-Word: File → Save As → PDF).", "Export to PDF (in Word: File → Save As → PDF)."],
+        ["תנו לקובץ שם לפי התבנית:", "Name the file using this pattern:", "Lab_SDR0_<ID1>_<ID2>.pdf"],
+        ["פתחו את ה-PDF ובדקו שהאיורים קריאים.", "Open the PDF and check that the figures are readable."],
+        ["העלו למטלה במודל של הקורס, עד המועד שמופיע שם, וודאו שהסטטוס \"הוגש לציון\".", "Upload it to the assignment on the course Moodle by the deadline shown there, and check the status reads \"Submitted for grading\"."],
+      ],
+      check: [
+        ["עמוד שער מלא", "Complete title page"],
+        ["7 איורים עם כיתוב ומספרים", "7 figures with captions and numbers"],
+        ["טבלאות 1 ו-2 מלאות", "Tables 1 and 2 complete"],
+        ["השוואה לקרסון באחוזים", "Comparison with Carson in percent"],
+        ["תשובות לכל השאלות", "Answers to every question"],
+        ["קובץ PDF בשם הנכון, הועלה למודל", "A PDF with the right name, uploaded to Moodle"],
+      ],
+    },
+
+    files: [
+      { file: "sdr_intro_lab.zip", d: "כל מה שצריך: sdr_intro.m, מדידת רוחב הסרט והסימולטור. פרסו לתיקייה אחת.", d_en: "Everything you need: sdr_intro.m, the bandwidth measurement and the simulator. Unzip into one folder." },
+      { file: "sdr_intro.m", d: "הניסוי כולו בקובץ אחד, ב-7 סעיפים: הגדרות, חיבור, צפייה חיה, מדידת תחנה, הקלטה, הצגת ההקלטה ושחרור.", d_en: "The whole pre-lab in one file, 7 sections: settings, connect, live view, measure a station, record, show the recording and release." },
+      { file: "sdr_measure_bw.m", d: "מודד רוחב סרט: ‎-⁦26 dB⁩ ו-99%.", d_en: "Measures bandwidth: -26 dB and 99%." },
+      { file: "sdr_setup_check.m", d: "אם הרדיו לא מתחבר: בודק את MATLAB, את חבילת התמיכה ואת הרדיו.", d_en: "If the radio does not connect: checks MATLAB, the support package and the radio." },
+    ],
+  },
+  {
     id: "sdr",
     course: "comm-lab",
     dir: "labs/sdr_spectrum",

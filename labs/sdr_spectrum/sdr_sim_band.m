@@ -114,9 +114,12 @@ switch e.type
         on = burstOn(e, t0, 0.65);
         s = (1 + 0.7*voice(t, e.seed))/sqrt(1.25);
     case 'ook'                               % 433.92 MHz remote control
-        on = burstOn(e, t0, 0.4);
-        bits = mod(floor((t - t0)*2e3) * 2654435761 + e.seed, 7) > 2;
-        s = complex(double(bits));
+        % a press lasts ~0.5 s; it repeats a 25 ms code word with 8 ms gaps
+        press = mod(t + 0.3*e.seed, 1.6) < 0.5;
+        word  = mod(t, 0.033) < 0.025;
+        bits  = mod(floor(mod(t, 0.033)*2e3) * 2654435761 + e.seed, 7) > 2;
+        s = complex(double(press & word & bits));
+        on = any(s ~= 0);
     case 'adsb'                              % 1090 MHz: 0.5 us pulses, 1 Mbit/s PPM
         s = complex(zeros(size(t))); T = t(end) - t0;
         rng(mod(e.seed + floor(t0*1e4), 2^31));
