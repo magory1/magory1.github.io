@@ -1,6 +1,6 @@
 /* נוצר אוטומטית מ-YouTube על ידי tools/sync_youtube.py – לא לערוך ידנית. */
 window.YT_SYNC = {
- "updated": "2026-11-26T16:48Z",
+ "updated": "2026-11-27T12:07Z",
  "playlists": {
   "PLP3rzyCjo-mU3Vxopw3iN4Bzuh2Jdv55d": [
    {
@@ -295,6 +295,11 @@ window.YT_SYNC = {
  },
  "latest": [
   {
+   "id": "pTqeyvTr558",
+   "title": "Electronic and Optical Communication 7",
+   "dur": "52:08"
+  },
+  {
    "id": "9cteNconjtI",
    "title": "Electronic and Optical Communication 6",
    "dur": "1:17:17"
@@ -348,11 +353,6 @@ window.YT_SYNC = {
    "id": "mae1-t_TQWo",
    "title": "Introduction to Overleaf and LaTeX",
    "dur": "41:56"
-  },
-  {
-   "id": "-WFdSuuxFyQ",
-   "title": "Lab 5 - Antennas Laboratory 130833",
-   "dur": "33:21"
   }
  ]
 };
